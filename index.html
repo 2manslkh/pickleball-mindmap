@@ -4,32 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Pickleball Strategy — Grandmaster Edition</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ===== DIP design tokens (see ../dip/DESIGN.md & packages/design-tokens) ===== */
+    :root {
+      /* color */
+      --green: #10B981; --green-dark: #0B9A6D; --green-bg: #ECFDF5;
+      --gold: #C4A33A; --gold-soft: #F5EFD0;
+      --ink: #0F172A; --ink80: #1E293B; --body: #334155; --muted: #64748B;
+      --line: #E2E8F0; --line2: #F1F5F9;
+      --bg: #FFFFFF; --bg-soft: #F8FAFC;
+      --warn: #F59E0B; --red: #DC2626;
+      /* radius */
+      --r-sm: 8px; --r-date: 10px; --r-swatch: 12px; --r-logo: 18px; --r-pill: 9999px;
+      /* shadow — most surfaces use border+contrast; shadow reserved for CTA */
+      --sh-cta: 0 6px 14px rgba(16,185,129,0.27);
+      --sh-cta-strong: 0 6px 20px rgba(16,185,129,0.20);
+      /* motion */
+      --dur-snap: 120ms; --dur-normal: 220ms; --dur-slow: 400ms;
+      --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+      /* type */
+      --font: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html { background: #0f1117; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding-bottom: max(80px, env(safe-area-inset-bottom)); }
+    html { background: var(--bg-soft); }
+    body {
+      font-family: var(--font); background: var(--bg-soft); color: var(--body);
+      min-height: 100vh; padding-bottom: max(80px, env(safe-area-inset-bottom));
+      -webkit-font-smoothing: antialiased;
+    }
 
     /* Header */
     .header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(15,17,23,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
-      border-bottom: 1px solid #1e2030;
+      border-bottom: 1px solid var(--line);
     }
     .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .header h1 { font-size: 17px; font-weight: 800; }
+    .header h1 { font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
     .header-actions { display: flex; gap: 6px; }
     .header-actions button {
-      background: #1e2030; border: 1px solid #2a2d42; color: #e2e8f0;
-      width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+      background: var(--bg); border: 1px solid var(--line); color: var(--body);
+      width: 34px; height: 34px; border-radius: var(--r-sm); cursor: pointer;
       font-size: 14px; display: flex; align-items: center; justify-content: center;
+      transition: background var(--dur-snap) var(--ease-out);
     }
-    .header-actions button:active { background: #3a3d52; }
+    .header-actions button:active { background: var(--line2); }
 
     /* Overall progress bar */
-    .overall-bar { height: 4px; background: #1e2030; border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
-    .overall-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #82b366, #6c8ebf, #9673a6); transition: width 0.4s; }
+    .overall-bar { height: 4px; background: var(--line2); border-radius: var(--r-pill); overflow: hidden; margin-bottom: 10px; }
+    .overall-bar-fill { height: 100%; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--green), var(--green-dark)); transition: width var(--dur-slow) var(--ease-out); }
 
     /* Pillar tabs */
     .pillar-tabs {
@@ -38,17 +64,17 @@
     }
     .pillar-tabs::-webkit-scrollbar { display: none; }
     .pillar-tab {
-      flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+      flex-shrink: 0; padding: 7px 14px; border-radius: var(--r-pill);
       font-size: 12px; font-weight: 600; cursor: pointer;
-      border: 1.5px solid transparent; background: #1e2030;
-      color: #94a3b8; transition: all 0.15s; white-space: nowrap;
+      border: 1px solid var(--line); background: var(--bg);
+      color: var(--muted); transition: all var(--dur-snap) var(--ease-out); white-space: nowrap;
       user-select: none; -webkit-user-select: none;
     }
     .pillar-tab:active { transform: scale(0.96); }
-    .pillar-tab.active { color: #fff; }
+    .pillar-tab.active { color: #fff; background: var(--green); border-color: var(--green); box-shadow: var(--sh-cta); }
     .pillar-tab .tab-score {
       display: inline-block; margin-left: 4px; font-size: 10px;
-      opacity: 0.6; font-weight: 500;
+      opacity: 0.7; font-weight: 600;
     }
 
     /* Content area */
@@ -56,184 +82,191 @@
 
     /* Pillar hero */
     .pillar-hero {
-      border-radius: 14px; padding: 20px; margin-bottom: 16px;
+      border-radius: var(--r-logo); padding: 20px; margin-bottom: 16px;
       position: relative; overflow: hidden;
+      background: var(--green-bg); border: 1px solid rgba(16,185,129,0.22);
     }
-    .pillar-hero h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-    .pillar-hero .chess-sub { font-size: 12px; opacity: 0.7; font-style: italic; margin-bottom: 12px; }
-    .pillar-hero .hero-stats { display: flex; gap: 20px; }
-    .pillar-hero .hero-stat { text-align: center; }
-    .pillar-hero .hero-stat .hs-val { font-size: 24px; font-weight: 800; }
-    .pillar-hero .hero-stat .hs-label { font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pillar-hero .hero-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--green-dark); margin-bottom: 6px; }
+    .pillar-hero h2 { font-size: 26px; font-weight: 800; margin-bottom: 4px; color: var(--ink); letter-spacing: -0.03em; }
+    .pillar-hero .chess-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .pillar-hero .hero-stats { display: flex; gap: 24px; }
+    .pillar-hero .hero-stat { text-align: left; }
+    .pillar-hero .hero-stat .hs-val { font-size: 28px; font-weight: 800; color: var(--green-dark); letter-spacing: -0.02em; }
+    .pillar-hero .hero-stat .hs-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
 
     /* Skill group */
     .skill-group { margin-bottom: 20px; }
     .skill-group-header {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
       cursor: pointer; user-select: none;
     }
-    .skill-group-header h3 { font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; flex: 1; }
+    .skill-group-header h3 { font-size: 11px; font-weight: 700; color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.14em; flex: 1; }
     .skill-group-header .sg-badge {
-      font-size: 10px; padding: 2px 8px; border-radius: 10px;
-      background: #1e2030; color: #64748b; font-weight: 600;
+      font-size: 10px; padding: 3px 9px; border-radius: var(--r-pill);
+      background: var(--green-bg); color: var(--green-dark); font-weight: 700;
     }
-    .skill-group-header .sg-chevron { font-size: 12px; color: #4a4d5e; transition: transform 0.2s; }
+    .skill-group-header .sg-chevron { font-size: 11px; color: var(--muted); transition: transform var(--dur-normal) var(--ease-out); }
     .skill-group-header.collapsed .sg-chevron { transform: rotate(-90deg); }
 
     /* Skill card */
     .skill-card {
-      background: #1a1d2e; border: 1px solid #2a2d42; border-radius: 12px;
+      background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-swatch);
       padding: 14px 16px; margin-bottom: 8px;
-      cursor: pointer; transition: all 0.15s;
+      cursor: pointer; transition: border-color var(--dur-normal) var(--ease-out), background var(--dur-normal) var(--ease-out);
       position: relative;
     }
-    .skill-card:active { transform: scale(0.985); background: #1e2135; }
-    .skill-card.expanded { border-color: #3a3d52; }
+    .skill-card:active { background: var(--bg-soft); }
+    .skill-card.expanded { border-color: var(--green); background: var(--bg); }
     .skill-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .skill-card .sc-label { font-size: 13px; font-weight: 600; color: #e2e8f0; line-height: 1.4; flex: 1; }
-    .skill-card .sc-sub { font-size: 11px; color: #64748b; margin-top: 3px; line-height: 1.3; }
-    .skill-card .sc-chess { font-size: 10px; color: #8b7ec8; margin-top: 3px; font-style: italic; }
+    .skill-card .sc-label { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.35; flex: 1; }
+    .skill-card .sc-sub { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+    .skill-card .sc-chess { font-size: 10px; font-weight: 600; color: var(--gold); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
 
     /* Inline rating dots */
-    .sc-dots { display: flex; gap: 3px; flex-shrink: 0; padding-top: 2px; }
+    .sc-dots { display: flex; gap: 3px; flex-shrink: 0; padding-top: 3px; }
     .sc-dot {
       width: 10px; height: 10px; border-radius: 50%;
-      border: 1.5px solid; transition: all 0.15s;
+      border: 1.5px solid; transition: all var(--dur-snap) var(--ease-out);
     }
     .sc-dot.filled { transform: scale(1.1); }
 
     /* Expanded card content */
-    .sc-expanded { margin-top: 14px; padding-top: 12px; border-top: 1px solid #2a2d42; }
+    .sc-expanded { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
     .sc-rate-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-    .sc-rate-label { font-size: 11px; color: #94a3b8; min-width: 65px; }
+    .sc-rate-label { font-size: 11px; color: var(--muted); min-width: 65px; }
     .sc-rate-btns { display: flex; gap: 4px; flex: 1; }
     .sc-rate-btn {
-      flex: 1; height: 36px; border-radius: 8px; border: 1.5px solid #2a2d42;
-      background: #0f1117; color: #4a4d5e; font-size: 12px; font-weight: 700;
-      cursor: pointer; transition: all 0.12s; font-family: inherit;
+      flex: 1; height: 36px; border-radius: var(--r-sm); border: 1.5px solid var(--line);
+      background: var(--bg-soft); color: var(--muted); font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all var(--dur-snap) var(--ease-out); font-family: inherit;
     }
     .sc-rate-btn:active { transform: scale(0.94); }
     .sc-rate-btn.active { color: #fff; border-color: transparent; }
-    .sc-rate-clear { font-size: 10px; color: #4a4d5e; cursor: pointer; padding: 4px 8px; border-radius: 6px; background: none; border: none; font-family: inherit; }
-    .sc-rate-clear:active { color: #b85450; }
+    .sc-rate-clear { font-size: 14px; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: var(--r-sm); background: none; border: none; font-family: inherit; }
+    .sc-rate-clear:active { color: var(--red); }
 
     .sc-notes textarea {
-      width: 100%; height: 48px; background: #0f1117;
-      border: 1px solid #2a2d42; border-radius: 8px;
-      color: #e2e8f0; font-family: inherit; font-size: 12px;
+      width: 100%; height: 48px; background: var(--bg-soft);
+      border: 1px solid var(--line); border-radius: var(--r-sm);
+      color: var(--ink); font-family: inherit; font-size: 12px;
       padding: 8px 10px; resize: none;
     }
-    .sc-notes textarea:focus { outline: none; border-color: #6c8ebf; }
-    .sc-notes textarea::placeholder { color: #4a4d5e; }
+    .sc-notes textarea:focus { outline: none; border-color: var(--green); }
+    .sc-notes textarea::placeholder { color: var(--muted); }
 
     /* Level labels */
     .level-labels { display: flex; justify-content: space-between; margin-top: 2px; margin-bottom: 8px; }
-    .level-labels span { font-size: 9px; color: #4a4d5e; }
-    .level-labels .current { font-weight: 600; }
+    .level-labels span { font-size: 9px; color: var(--muted); }
+    .level-labels .current { font-weight: 700; }
 
-    /* Quiz & Dashboard overlays — keep from previous version */
+    /* Quiz & Dashboard overlays */
     .overlay {
       position: fixed; inset: 0; z-index: 500;
-      background: rgba(15,17,23,0.97);
+      background: rgba(248,250,252,0.985); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       display: flex; flex-direction: column; align-items: center;
       padding: 20px; padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(20px, env(safe-area-inset-bottom));
-      transition: opacity 0.3s; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      transition: opacity var(--dur-slow) var(--ease-out); overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     .overlay.hidden { opacity: 0; pointer-events: none; }
     .overlay-card {
       width: 100%; max-width: 520px;
-      background: #1a1d2e; border: 1px solid #2a2d42;
-      border-radius: 16px; padding: 24px 20px;
+      background: var(--bg); border: 1px solid var(--line);
+      border-radius: var(--r-logo); padding: 24px 20px;
       position: relative; max-height: calc(100vh - 80px);
       overflow-y: auto; -webkit-overflow-scrolling: touch;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.08);
     }
     .overlay-close {
       position: fixed; top: max(16px, env(safe-area-inset-top)); right: 16px;
-      background: #1e2030; border: 1px solid #333; color: #e2e8f0;
-      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--bg); border: 1px solid var(--line); color: var(--body);
+      width: 40px; height: 40px; border-radius: var(--r-date);
       cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 501;
     }
-    .overlay-close:active { background: #3a3d52; }
+    .overlay-close:active { background: var(--line2); }
 
     /* Quiz styles */
     .quiz-progress { display: flex; gap: 3px; margin-bottom: 18px; }
-    .quiz-progress .dot { height: 4px; flex: 1; border-radius: 2px; background: #2a2d42; transition: background 0.3s; }
-    .quiz-progress .dot.done { background: #82b366; }
-    .quiz-progress .dot.wrong { background: #b85450; }
-    .quiz-progress .dot.current { background: #6c8ebf; }
-    .quiz-cat { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 8px; font-weight: 600; }
-    .quiz-q { font-size: 15px; font-weight: 600; color: #e2e8f0; line-height: 1.5; margin-bottom: 16px; }
-    .quiz-scenario { background: #0f1117; border: 1px solid #2a2d42; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: #94a3b8; line-height: 1.5; font-style: italic; }
+    .quiz-progress .dot { height: 4px; flex: 1; border-radius: var(--r-pill); background: var(--line); transition: background var(--dur-normal) var(--ease-out); }
+    .quiz-progress .dot.done { background: var(--green); }
+    .quiz-progress .dot.wrong { background: var(--red); }
+    .quiz-progress .dot.current { background: var(--gold); }
+    .quiz-cat { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--green-dark); margin-bottom: 8px; font-weight: 700; }
+    .quiz-q { font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.4; margin-bottom: 16px; letter-spacing: -0.01em; }
+    .quiz-scenario { background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-date); padding: 12px 14px; margin-bottom: 14px; font-size: 13px; color: var(--body); line-height: 1.5; }
     .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
     .quiz-opt {
-      background: #0f1117; border: 1.5px solid #2a2d42; border-radius: 10px;
-      padding: 12px 14px; cursor: pointer; font-size: 12px; color: #e2e8f0;
-      transition: all 0.12s; text-align: left; font-family: inherit; line-height: 1.4;
+      background: var(--bg); border: 1.5px solid var(--line); border-radius: var(--r-date);
+      padding: 12px 14px; cursor: pointer; font-size: 13px; color: var(--body);
+      transition: all var(--dur-snap) var(--ease-out); text-align: left; font-family: inherit; line-height: 1.4;
       display: flex; align-items: flex-start; gap: 10px;
     }
-    .quiz-opt:active { transform: scale(0.97); background: #1e2030; }
-    .quiz-opt .opt-key { min-width: 22px; height: 22px; border-radius: 6px; background: #2a2d42; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #94a3b8; flex-shrink: 0; }
-    .quiz-opt.correct { border-color: #82b366; background: #1a2a1a; }
-    .quiz-opt.correct .opt-key { background: #82b366; color: #fff; }
-    .quiz-opt.wrong { border-color: #b85450; background: #2a1a1a; }
-    .quiz-opt.wrong .opt-key { background: #b85450; color: #fff; }
-    .quiz-opt.disabled { pointer-events: none; opacity: 0.4; }
-    .quiz-explain { margin-top: 14px; padding: 12px 14px; background: #0f1117; border: 1px solid #2a2d42; border-radius: 10px; font-size: 11px; color: #94a3b8; line-height: 1.5; }
-    .quiz-explain strong { color: #e2e8f0; }
-    .quiz-btn { margin-top: 14px; width: 100%; padding: 13px; background: #6c8ebf; border: none; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .quiz-opt:active { transform: scale(0.97); background: var(--bg-soft); }
+    .quiz-opt .opt-key { min-width: 22px; height: 22px; border-radius: 6px; background: var(--line2); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+    .quiz-opt.correct { border-color: var(--green); background: var(--green-bg); }
+    .quiz-opt.correct .opt-key { background: var(--green); color: #fff; }
+    .quiz-opt.wrong { border-color: var(--red); background: #FEF2F2; }
+    .quiz-opt.wrong .opt-key { background: var(--red); color: #fff; }
+    .quiz-opt.disabled { pointer-events: none; opacity: 0.45; }
+    .quiz-explain { margin-top: 14px; padding: 12px 14px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-date); font-size: 12px; color: var(--body); line-height: 1.5; }
+    .quiz-explain strong { color: var(--ink); }
+    .quiz-btn { margin-top: 14px; width: 100%; padding: 13px; background: var(--green); border: none; border-radius: var(--r-date); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: var(--sh-cta); transition: transform var(--dur-snap) var(--ease-out); }
     .quiz-btn:active { transform: scale(0.98); }
-    .quiz-btn.secondary { background: #2a2d42; margin-top: 8px; }
+    .quiz-btn.secondary { background: var(--line2); color: var(--body); margin-top: 8px; box-shadow: none; }
 
     /* Results */
     .results-center { text-align: center; }
     .score-ring { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid; }
-    .score-ring .sr-num { font-size: 28px; font-weight: 800; }
-    .score-ring .sr-pct { font-size: 10px; opacity: 0.7; }
-    .skill-update-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1e2030; font-size: 11px; }
-    .su-up { color: #82b366; font-weight: 600; }
-    .su-down { color: #b85450; font-weight: 600; }
-    .su-same { color: #4a4d5e; }
+    .score-ring .sr-num { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+    .score-ring .sr-pct { font-size: 10px; opacity: 0.8; font-weight: 600; }
+    .skill-update-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line2); font-size: 11px; color: var(--body); }
+    .su-up { color: var(--green); font-weight: 700; }
+    .su-down { color: var(--red); font-weight: 700; }
+    .su-same { color: var(--muted); }
 
     /* Dashboard */
-    .dash-section { background: #1a1d2e; border: 1px solid #2a2d42; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
-    .dash-section h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .dash-section { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-logo); padding: 18px; margin-bottom: 14px; }
+    .dash-section h3 { font-size: 15px; font-weight: 800; margin-bottom: 12px; color: var(--ink); letter-spacing: -0.02em; }
     .pillar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .pillar-row .pr-label { width: 80px; font-size: 11px; color: #94a3b8; text-align: right; flex-shrink: 0; }
-    .pillar-row .pr-bar { flex: 1; height: 18px; background: #0f1117; border-radius: 5px; overflow: hidden; }
-    .pillar-row .pr-fill { height: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 9px; font-weight: 700; color: #fff; min-width: 24px; transition: width 0.4s; }
-    .weak-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #0f1117; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid; }
-    .weak-card .wc-name { flex: 1; font-size: 11px; color: #e2e8f0; }
+    .pillar-row .pr-label { width: 80px; font-size: 11px; color: var(--muted); text-align: right; flex-shrink: 0; }
+    .pillar-row .pr-bar { flex: 1; height: 18px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .pillar-row .pr-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 9px; font-weight: 700; color: #fff; min-width: 24px; transition: width var(--dur-slow) var(--ease-out); }
+    .weak-card { display: flex; align-items: center; gap: 10px; padding: 9px 11px; background: var(--bg-soft); border-radius: var(--r-sm); margin-bottom: 6px; border-left: 3px solid; }
+    .weak-card .wc-name { flex: 1; font-size: 12px; color: var(--ink); }
     .weak-card .wc-stars { font-size: 10px; font-weight: 600; }
-    .practice-block { background: #0f1117; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
-    .practice-block h4 { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
-    .practice-block .pb-time { font-size: 10px; color: #d6b656; font-weight: 600; margin-bottom: 6px; }
-    .practice-step { display: flex; gap: 6px; margin-bottom: 4px; font-size: 11px; color: #94a3b8; line-height: 1.4; }
-    .practice-step strong { color: #e2e8f0; }
-    .practice-step .ps-num { min-width: 18px; height: 18px; background: #2a2d42; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #64748b; flex-shrink: 0; }
+    .practice-block { background: var(--bg-soft); border-radius: var(--r-date); padding: 12px 14px; margin-bottom: 8px; }
+    .practice-block h4 { font-size: 11px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+    .practice-block .pb-time { font-size: 10px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+    .practice-step { display: flex; gap: 6px; margin-bottom: 4px; font-size: 11px; color: var(--muted); line-height: 1.4; }
+    .practice-step strong { color: var(--ink); }
+    .practice-step .ps-num { min-width: 18px; height: 18px; background: var(--line2); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
     .hist-bars { display: flex; align-items: flex-end; gap: 3px; height: 60px; }
     .hist-bar { flex: 1; min-width: 6px; max-width: 20px; border-radius: 2px 2px 0 0; }
 
-    /* Quiz FAB */
+    /* Quiz FAB — premium green CTA */
     .quiz-fab {
       position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
       z-index: 90;
-      background: linear-gradient(135deg, #6c8ebf 0%, #5a7dae 100%);
-      color: #fff; border: none; border-radius: 50px;
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+      color: #fff; border: none; border-radius: var(--r-pill);
       padding: 14px 28px;
       font-size: 15px; font-weight: 700; font-family: inherit;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(108,142,191,0.4), 0 2px 8px rgba(0,0,0,0.3);
-      transition: all 0.2s;
-      letter-spacing: 0.3px;
+      box-shadow: var(--sh-cta-strong);
+      transition: transform var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+      letter-spacing: 0.01em;
     }
-    .quiz-fab:active { transform: translateX(-50%) scale(0.95); box-shadow: 0 2px 10px rgba(108,142,191,0.3); }
+    .quiz-fab:active { transform: translateX(-50%) scale(0.95); }
     @media (min-width: 768px) {
-      .quiz-fab:hover { transform: translateX(-50%) scale(1.04); box-shadow: 0 6px 24px rgba(108,142,191,0.5); }
+      .quiz-fab:hover { transform: translateX(-50%) translateY(-1px); box-shadow: 0 8px 26px rgba(16,185,129,0.3); }
     }
 
     /* Radar */
     .radar-wrap { display: flex; justify-content: center; margin-bottom: 10px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -272,7 +305,7 @@
 <script>
 // ============ DATA ============
 const pillars = [
-  { id: 'score', label: 'Score Points', emoji: '⚔️', color: '#82b366', bg: '#1a2a1a', chess: 'Attack with purpose',
+  { id: 'score', label: 'Score Points', emoji: '⚔️', color: '#10B981', bg: '#ECFDF5', chess: 'Attack with purpose',
     groups: [
       { label: 'Force Errors', skills: [
         { id: 'diff_balls', label: 'Give difficult balls', sub: 'Calibrate to their skill level' },
@@ -295,7 +328,7 @@ const pillars = [
       ]},
     ]
   },
-  { id: 'nolose', label: "Don't Lose", emoji: '🛡️', color: '#b85450', bg: '#2a1a1a', chess: 'Solid defense wins matches',
+  { id: 'nolose', label: "Don't Lose", emoji: '🛡️', color: '#10B981', bg: '#ECFDF5', chess: 'Solid defense wins matches',
     groups: [
       { label: 'Avoid Errors', skills: [
         { id: 'drill', label: 'Drill technique', sub: 'Reps build consistency' },
@@ -320,7 +353,7 @@ const pillars = [
       ]},
     ]
   },
-  { id: 'position', label: 'Positional', emoji: '♟️', color: '#6c8ebf', bg: '#1a1e2a', chess: 'Control key squares',
+  { id: 'position', label: 'Positional', emoji: '♟️', color: '#10B981', bg: '#ECFDF5', chess: 'Control key squares',
     groups: [
       { label: 'Kitchen Line = Center Control', skills: [
         { id: 'kc1', label: 'Both at kitchen ASAP', sub: 'The team that gets there first wins' },
@@ -341,7 +374,7 @@ const pillars = [
       ]},
     ]
   },
-  { id: 'tempo', label: 'Tempo', emoji: '⏱️', color: '#d6b656', bg: '#2a2518', chess: 'Who dictates play?',
+  { id: 'tempo', label: 'Tempo', emoji: '⏱️', color: '#10B981', bg: '#ECFDF5', chess: 'Who dictates play?',
     groups: [
       { label: 'Opening Theory', skills: [
         { id: 'op1', label: 'Serve deep', sub: 'Delay their advance' },
@@ -362,7 +395,7 @@ const pillars = [
       ]},
     ]
   },
-  { id: 'psych', label: 'Psychology', emoji: '🧠', color: '#9673a6', bg: '#221a2a', chess: 'Know your opponent',
+  { id: 'psych', label: 'Psychology', emoji: '🧠', color: '#10B981', bg: '#ECFDF5', chess: 'Know your opponent',
     groups: [
       { label: 'Pattern Recognition', skills: [
         { id: 'pa1', label: 'Read paddle angle', sub: 'Predicts ball direction' },
@@ -406,14 +439,15 @@ function getRating(id) { return ratings[id] || { score: 0, notes: '' }; }
 function setRating(id, score, notes) { ratings[id] = { score, notes, updated: new Date().toISOString() }; save(); }
 
 const levels = ['','Beginner','Developing','Competent','Advanced','Elite'];
-const levelColors = ['#4a4d5e','#c0392b','#d68910','#d4ac0d','#7dcea0','#27ae60'];
+// Rating ramp from dip semantic tokens: red → warn → gold → greenDark → green
+const levelColors = ['#64748B','#DC2626','#F59E0B','#C4A33A','#0B9A6D','#10B981'];
 
 // ============ RENDER ============
 function renderTabs() {
   const tabs = document.getElementById('pillarTabs');
   tabs.innerHTML = pillars.map(p => {
     const stats = getPillarStats(p);
-    return `<div class="pillar-tab ${p.id === activePillar ? 'active' : ''}" data-id="${p.id}" style="${p.id === activePillar ? `background:${p.bg};border-color:${p.color};color:#fff` : ''}">${p.emoji} ${p.label}<span class="tab-score">${stats.avg > 0 ? stats.avg.toFixed(1) : ''}</span></div>`;
+    return `<div class="pillar-tab ${p.id === activePillar ? 'active' : ''}" data-id="${p.id}">${p.emoji} ${p.label}<span class="tab-score">${stats.avg > 0 ? stats.avg.toFixed(1) : ''}</span></div>`;
   }).join('');
   tabs.querySelectorAll('.pillar-tab').forEach(t => t.onclick = () => { activePillar = t.dataset.id; renderTabs(); renderContent(); });
 }
@@ -435,12 +469,13 @@ function renderContent() {
   const stats = getPillarStats(p);
   const content = document.getElementById('mainContent');
 
-  let html = `<div class="pillar-hero" style="background:${p.bg};border:1px solid ${p.color}33">
-    <h2 style="color:${p.color}">${p.emoji} ${p.label}</h2>
+  let html = `<div class="pillar-hero">
+    <div class="hero-eyebrow">Pillar</div>
+    <h2>${p.emoji} ${p.label}</h2>
     <div class="chess-sub">♟️ ${esc(p.chess)}</div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hs-val" style="color:${p.color}">${stats.avg > 0 ? stats.avg.toFixed(1) : '—'}</div><div class="hs-label">Avg Level</div></div>
-      <div class="hero-stat"><div class="hs-val" style="color:${p.color}">${stats.rated}/${stats.total}</div><div class="hs-label">Rated</div></div>
+      <div class="hero-stat"><div class="hs-val">${stats.avg > 0 ? stats.avg.toFixed(1) : '—'}</div><div class="hs-label">Avg Level</div></div>
+      <div class="hero-stat"><div class="hs-val">${stats.rated}/${stats.total}</div><div class="hs-label">Rated</div></div>
     </div>
   </div>`;
 
@@ -494,9 +529,9 @@ function renderContent() {
   });
 
   // GM principle
-  html += `<div style="text-align:center;padding:20px 16px;margin-top:8px;background:#1a1d2e;border-radius:12px;border:1px solid #2a2d42">
-    <div style="font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:4px">THE GM PRINCIPLE</div>
-    <div style="font-size:11px;color:#94a3b8;line-height:1.5">Every shot is a move. Every move has a purpose.<br>If you can't explain WHY you hit that shot, you shouldn't have hit it.</div>
+  html += `<div style="text-align:center;padding:20px 16px;margin-top:8px;background:var(--gold-soft);border-radius:var(--r-logo);border:1px solid rgba(196,163,58,0.3)">
+    <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.14em">The GM Principle</div>
+    <div style="font-size:13px;color:var(--ink80);line-height:1.55">Every shot is a move. Every move has a purpose.<br>If you can't explain WHY you hit that shot, you shouldn't have hit it.</div>
   </div>`;
 
   content.innerHTML = html;
@@ -669,10 +704,10 @@ function nextQ(){quizState.cur++;quizState.cur>=quizState.qs.length?showResults(
 function showResults() {
   const t=quizState.ans.length,c=quizState.ans.filter(a=>a.correct).length,pct=Math.round(c/t*100);
   quizScoreHistory.push({date:new Date().toISOString(),correct:c,total:t,pct}); if(quizScoreHistory.length>50)quizScoreHistory=quizScoreHistory.slice(-50); saveQS();
-  let grade,gc; if(pct>=90){grade='Elite';gc='#82b366';}else if(pct>=70){grade='Advanced';gc='#6c8ebf';}else if(pct>=50){grade='Competent';gc='#d6b656';}else if(pct>=30){grade='Developing';gc='#d68910';}else{grade='Beginner';gc='#b85450';}
+  let grade,gc; if(pct>=90){grade='Elite';gc='#10B981';}else if(pct>=70){grade='Advanced';gc='#0B9A6D';}else if(pct>=50){grade='Competent';gc='#C4A33A';}else if(pct>=30){grade='Developing';gc='#F59E0B';}else{grade='Beginner';gc='#DC2626';}
   let upd=[]; for(const[sid,d]of Object.entries(quizState.scores)){const nd=skillMap[sid];if(!nd)continue;const old=getRating(sid).score||0;let ns;if(d.c===d.t)ns=Math.min(5,Math.max(old,Math.ceil(d.md*1.2)));else if(d.c>0)ns=Math.max(1,Math.min(5,Math.round(d.md*0.8)));else ns=Math.max(1,old>0?old-1:1);const cur=getRating(sid);setRating(sid,ns,cur.notes||'');upd.push({label:nd.label,old,ns});}
   let updH='';if(upd.length){updH='<div style="text-align:left;margin:16px 0"><div style="font-size:11px;font-weight:700;margin-bottom:8px">Skill Ratings Updated:</div>';upd.forEach(u=>{const stars=n=>'★'.repeat(n)+'☆'.repeat(5-n);let cls=u.ns>u.old?'su-up':u.ns<u.old?'su-down':'su-same';updH+=`<div class="skill-update-row"><span>${esc(u.label)}</span><span class="${cls}">${u.old>0?stars(u.old):'(new)'} → ${stars(u.ns)}</span></div>`;});updH+='</div>';}
-  document.getElementById('quizCard').innerHTML=`<div class="results-center"><div class="score-ring" style="border-color:${gc};background:${gc}15"><div class="sr-num" style="color:${gc}">${c}/${t}</div><div class="sr-pct" style="color:${gc}">${pct}%</div></div><h2 style="color:${gc};font-size:18px;margin-bottom:6px">${grade}</h2><p style="font-size:12px;color:#94a3b8;margin-bottom:8px">${c} of ${t} correct</p>${updH}<button class="quiz-btn" onclick="startQuiz()">🧠 Try Again</button><button class="quiz-btn secondary" onclick="closeQuiz()">Done</button></div>`;
+  document.getElementById('quizCard').innerHTML=`<div class="results-center"><div class="score-ring" style="border-color:${gc};background:${gc}15"><div class="sr-num" style="color:${gc}">${c}/${t}</div><div class="sr-pct" style="color:${gc}">${pct}%</div></div><h2 style="color:${gc};font-size:18px;margin-bottom:6px">${grade}</h2><p style="font-size:13px;color:var(--muted);margin-bottom:8px">${c} of ${t} correct</p>${updH}<button class="quiz-btn" onclick="startQuiz()">🧠 Try Again</button><button class="quiz-btn secondary" onclick="closeQuiz()">Done</button></div>`;
   document.onkeydown=null; renderOverallBar(); renderTabs(); renderContent();
 }
 
@@ -685,12 +720,12 @@ function renderDash() {
 
   // Radar
   const sz=220,cx=sz/2,cy=sz/2,mr=75;
-  let svg=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">`;
-  for(let l=1;l<=5;l++){const r=mr*l/5;let pts=pillars.map((_,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2;return`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`;}).join(' ');svg+=`<polygon points="${pts}" fill="none" stroke="#2a2d42"/>`;}
-  pillars.forEach((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2;svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+mr*Math.cos(a)}" y2="${cy+mr*Math.sin(a)}" stroke="#2a2d42" stroke-width="0.5"/>`;const lx=cx+(mr+24)*Math.cos(a),ly=cy+(mr+24)*Math.sin(a);const anc=Math.abs(Math.cos(a))<0.3?'middle':Math.cos(a)>0?'start':'end';svg+=`<text x="${lx}" y="${ly+4}" text-anchor="${anc}" fill="${p.color}" font-size="9" font-weight="600" font-family="Inter,sans-serif">${p.label}</text>`;});
+  let svg=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="overflow:visible">`;
+  for(let l=1;l<=5;l++){const r=mr*l/5;let pts=pillars.map((_,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2;return`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`;}).join(' ');svg+=`<polygon points="${pts}" fill="none" stroke="#E2E8F0"/>`;}
+  pillars.forEach((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2;svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+mr*Math.cos(a)}" y2="${cy+mr*Math.sin(a)}" stroke="#E2E8F0" stroke-width="0.5"/>`;const lx=cx+(mr+24)*Math.cos(a),ly=cy+(mr+24)*Math.sin(a);const anc=Math.abs(Math.cos(a))<0.3?'middle':Math.cos(a)>0?'start':'end';svg+=`<text x="${lx}" y="${ly+4}" text-anchor="${anc}" fill="#334155" font-size="9" font-weight="700" font-family="Plus Jakarta Sans, Inter, sans-serif">${p.label}</text>`;});
   let dp=ps.map((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2,r=mr*(p.avg/5);return`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`;}).join(' ');
-  svg+=`<polygon points="${dp}" fill="rgba(108,142,191,0.2)" stroke="#6c8ebf" stroke-width="2"/>`;
-  ps.forEach((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2,r=mr*(p.avg/5);svg+=`<circle cx="${cx+r*Math.cos(a)}" cy="${cy+r*Math.sin(a)}" r="4" fill="${p.color}" stroke="#1a1d2e" stroke-width="2"/>`;});
+  svg+=`<polygon points="${dp}" fill="rgba(16,185,129,0.18)" stroke="#10B981" stroke-width="2"/>`;
+  ps.forEach((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2,r=mr*(p.avg/5);svg+=`<circle cx="${cx+r*Math.cos(a)}" cy="${cy+r*Math.sin(a)}" r="4" fill="#10B981" stroke="#FFFFFF" stroke-width="2"/>`;});
   svg+='</svg>';
 
   let pillarBars='';ps.forEach(p=>{const pct=p.avg>0?Math.round(p.avg/5*100):0;pillarBars+=`<div class="pillar-row"><div class="pr-label">${p.label}</div><div class="pr-bar"><div class="pr-fill" style="width:${Math.max(5,pct)}%;background:${p.color}">${p.avg.toFixed(1)}</div></div></div>`;});
@@ -698,12 +733,12 @@ function renderDash() {
   // Weakest
   let all=[];allSkillIds.forEach(id=>{const s=skillMap[id],r=getRating(id);if(!s)return;all.push({id,label:s.label,score:r.score,sub:s.sub});});
   all.sort((a,b)=>{if(a.score===0&&b.score===0)return 0;if(a.score===0)return-1;if(b.score===0)return 1;return a.score-b.score;});
-  let weakH='';all.slice(0,6).forEach(w=>{const c=w.score===0?'#4a4d5e':w.score<=2?'#b85450':'#d6b656';weakH+=`<div class="weak-card" style="border-color:${c}"><div class="wc-name">${esc(w.label)}</div><div class="wc-stars" style="color:${c}">${w.score>0?'★'.repeat(w.score)+'☆'.repeat(5-w.score):'—'}</div></div>`;});
+  let weakH='';all.slice(0,6).forEach(w=>{const c=w.score===0?'#64748B':w.score<=2?'#DC2626':'#C4A33A';weakH+=`<div class="weak-card" style="border-color:${c}"><div class="wc-name">${esc(w.label)}</div><div class="wc-stars" style="color:${c}">${w.score>0?'★'.repeat(w.score)+'☆'.repeat(5-w.score):'—'}</div></div>`;});
 
   // History
   let histH='';const recent=quizScoreHistory.slice(-20);
-  if(recent.length){let bars='';recent.forEach(s=>{const h=Math.max(4,s.pct/100*55);const c=s.pct>=80?'#82b366':s.pct>=60?'#d6b656':'#b85450';bars+=`<div class="hist-bar" style="height:${h}px;background:${c}" title="${s.pct}%"></div>`;});histH=`<div class="hist-bars">${bars}</div>`;}
-  else histH='<div style="text-align:center;padding:12px;color:#4a4d5e;font-size:11px">Take a quiz to see history</div>';
+  if(recent.length){let bars='';recent.forEach(s=>{const h=Math.max(4,s.pct/100*55);const c=s.pct>=80?'#10B981':s.pct>=60?'#C4A33A':'#DC2626';bars+=`<div class="hist-bar" style="height:${h}px;background:${c}" title="${s.pct}%"></div>`;});histH=`<div class="hist-bars">${bars}</div>`;}
+  else histH='<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Take a quiz to see history</div>';
 
   d.innerHTML=`
     <div class="dash-section"><h3>📊 Skill Radar</h3><div class="radar-wrap">${svg}</div>${pillarBars}</div>
