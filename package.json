@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "release:patch": "npm version patch -m \"chore(release): %s\" && git push --follow-tags",
+    "release:minor": "npm version minor -m \"chore(release): %s\" && git push --follow-tags",
+    "release:major": "npm version major -m \"chore(release): %s\" && git push --follow-tags"
   },
   "dependencies": {
     "next": "^16.2.2",

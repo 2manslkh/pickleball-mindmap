@@ -61,3 +61,21 @@ everything.
 
 Deploys to **Vercel** as a standard Next.js app (`vercel.json` pins the `nextjs`
 framework). Push to the default branch or run `vercel`.
+
+## Releasing (semantic versioning)
+
+This project follows [SemVer](https://semver.org) and tracks releases with annotated
+git tags (`vMAJOR.MINOR.PATCH`) and [`CHANGELOG.md`](./CHANGELOG.md).
+
+To cut a release, move the relevant `[Unreleased]` notes into a new version section in
+the changelog, commit, then run one of:
+
+```bash
+npm run release:patch   # 2.0.0 -> 2.0.1  (bugfixes)
+npm run release:minor   # 2.0.0 -> 2.1.0  (new features, backwards compatible)
+npm run release:major   # 2.0.0 -> 3.0.0  (breaking changes)
+```
+
+Each script bumps `package.json`, creates a `chore(release): vX.Y.Z` commit and a
+matching annotated tag, and pushes the commit and tag (`git push --follow-tags`).
+The tag `vX.Y.Z` always points to the commit where `package.json` is at that version.
