@@ -2,357 +2,726 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Pickleball Strategy — Grandmaster Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; overflow: hidden; }
-    #mindmap { width: 100vw; height: 100vh; }
-    .controls { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 100; }
-    .controls button { background: #1e2030; border: 1px solid #333; color: #e2e8f0; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-    .controls button:hover { background: #2a2d42; }
-    .title-bar { position: fixed; top: 0; left: 0; right: 0; padding: 16px 24px; background: linear-gradient(180deg, rgba(15,17,23,0.95) 0%, rgba(15,17,23,0) 100%); z-index: 100; pointer-events: none; }
-    .title-bar h1 { font-size: 18px; font-weight: 700; color: #e2e8f0; }
-    .title-bar p { font-size: 12px; color: #64748b; margin-top: 2px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { background: #0f1117; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding-bottom: max(80px, env(safe-area-inset-bottom)); }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,17,23,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top));
+      border-bottom: 1px solid #1e2030;
+    }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .header h1 { font-size: 17px; font-weight: 800; }
+    .header-actions { display: flex; gap: 6px; }
+    .header-actions button {
+      background: #1e2030; border: 1px solid #2a2d42; color: #e2e8f0;
+      width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+      font-size: 14px; display: flex; align-items: center; justify-content: center;
+    }
+    .header-actions button:active { background: #3a3d52; }
+
+    /* Overall progress bar */
+    .overall-bar { height: 4px; background: #1e2030; border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+    .overall-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #82b366, #6c8ebf, #9673a6); transition: width 0.4s; }
+
+    /* Pillar tabs */
+    .pillar-tabs {
+      display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+      padding-bottom: 2px;
+    }
+    .pillar-tabs::-webkit-scrollbar { display: none; }
+    .pillar-tab {
+      flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      border: 1.5px solid transparent; background: #1e2030;
+      color: #94a3b8; transition: all 0.15s; white-space: nowrap;
+      user-select: none; -webkit-user-select: none;
+    }
+    .pillar-tab:active { transform: scale(0.96); }
+    .pillar-tab.active { color: #fff; }
+    .pillar-tab .tab-score {
+      display: inline-block; margin-left: 4px; font-size: 10px;
+      opacity: 0.6; font-weight: 500;
+    }
+
+    /* Content area */
+    .content { padding: 16px; max-width: 640px; margin: 0 auto; }
+
+    /* Pillar hero */
+    .pillar-hero {
+      border-radius: 14px; padding: 20px; margin-bottom: 16px;
+      position: relative; overflow: hidden;
+    }
+    .pillar-hero h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .pillar-hero .chess-sub { font-size: 12px; opacity: 0.7; font-style: italic; margin-bottom: 12px; }
+    .pillar-hero .hero-stats { display: flex; gap: 20px; }
+    .pillar-hero .hero-stat { text-align: center; }
+    .pillar-hero .hero-stat .hs-val { font-size: 24px; font-weight: 800; }
+    .pillar-hero .hero-stat .hs-label { font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Skill group */
+    .skill-group { margin-bottom: 20px; }
+    .skill-group-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+      cursor: pointer; user-select: none;
+    }
+    .skill-group-header h3 { font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; flex: 1; }
+    .skill-group-header .sg-badge {
+      font-size: 10px; padding: 2px 8px; border-radius: 10px;
+      background: #1e2030; color: #64748b; font-weight: 600;
+    }
+    .skill-group-header .sg-chevron { font-size: 12px; color: #4a4d5e; transition: transform 0.2s; }
+    .skill-group-header.collapsed .sg-chevron { transform: rotate(-90deg); }
+
+    /* Skill card */
+    .skill-card {
+      background: #1a1d2e; border: 1px solid #2a2d42; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 8px;
+      cursor: pointer; transition: all 0.15s;
+      position: relative;
+    }
+    .skill-card:active { transform: scale(0.985); background: #1e2135; }
+    .skill-card.expanded { border-color: #3a3d52; }
+    .skill-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .skill-card .sc-label { font-size: 13px; font-weight: 600; color: #e2e8f0; line-height: 1.4; flex: 1; }
+    .skill-card .sc-sub { font-size: 11px; color: #64748b; margin-top: 3px; line-height: 1.3; }
+    .skill-card .sc-chess { font-size: 10px; color: #8b7ec8; margin-top: 3px; font-style: italic; }
+
+    /* Inline rating dots */
+    .sc-dots { display: flex; gap: 3px; flex-shrink: 0; padding-top: 2px; }
+    .sc-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 1.5px solid; transition: all 0.15s;
+    }
+    .sc-dot.filled { transform: scale(1.1); }
+
+    /* Expanded card content */
+    .sc-expanded { margin-top: 14px; padding-top: 12px; border-top: 1px solid #2a2d42; }
+    .sc-rate-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .sc-rate-label { font-size: 11px; color: #94a3b8; min-width: 65px; }
+    .sc-rate-btns { display: flex; gap: 4px; flex: 1; }
+    .sc-rate-btn {
+      flex: 1; height: 36px; border-radius: 8px; border: 1.5px solid #2a2d42;
+      background: #0f1117; color: #4a4d5e; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.12s; font-family: inherit;
+    }
+    .sc-rate-btn:active { transform: scale(0.94); }
+    .sc-rate-btn.active { color: #fff; border-color: transparent; }
+    .sc-rate-clear { font-size: 10px; color: #4a4d5e; cursor: pointer; padding: 4px 8px; border-radius: 6px; background: none; border: none; font-family: inherit; }
+    .sc-rate-clear:active { color: #b85450; }
+
+    .sc-notes textarea {
+      width: 100%; height: 48px; background: #0f1117;
+      border: 1px solid #2a2d42; border-radius: 8px;
+      color: #e2e8f0; font-family: inherit; font-size: 12px;
+      padding: 8px 10px; resize: none;
+    }
+    .sc-notes textarea:focus { outline: none; border-color: #6c8ebf; }
+    .sc-notes textarea::placeholder { color: #4a4d5e; }
+
+    /* Level labels */
+    .level-labels { display: flex; justify-content: space-between; margin-top: 2px; margin-bottom: 8px; }
+    .level-labels span { font-size: 9px; color: #4a4d5e; }
+    .level-labels .current { font-weight: 600; }
+
+    /* Quiz & Dashboard overlays — keep from previous version */
+    .overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(15,17,23,0.97);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px; padding-top: max(60px, env(safe-area-inset-top));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      transition: opacity 0.3s; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-card {
+      width: 100%; max-width: 520px;
+      background: #1a1d2e; border: 1px solid #2a2d42;
+      border-radius: 16px; padding: 24px 20px;
+      position: relative; max-height: calc(100vh - 80px);
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .overlay-close {
+      position: fixed; top: max(16px, env(safe-area-inset-top)); right: 16px;
+      background: #1e2030; border: 1px solid #333; color: #e2e8f0;
+      width: 40px; height: 40px; border-radius: 10px;
+      cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; z-index: 501;
+    }
+    .overlay-close:active { background: #3a3d52; }
+
+    /* Quiz styles */
+    .quiz-progress { display: flex; gap: 3px; margin-bottom: 18px; }
+    .quiz-progress .dot { height: 4px; flex: 1; border-radius: 2px; background: #2a2d42; transition: background 0.3s; }
+    .quiz-progress .dot.done { background: #82b366; }
+    .quiz-progress .dot.wrong { background: #b85450; }
+    .quiz-progress .dot.current { background: #6c8ebf; }
+    .quiz-cat { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 8px; font-weight: 600; }
+    .quiz-q { font-size: 15px; font-weight: 600; color: #e2e8f0; line-height: 1.5; margin-bottom: 16px; }
+    .quiz-scenario { background: #0f1117; border: 1px solid #2a2d42; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: #94a3b8; line-height: 1.5; font-style: italic; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      background: #0f1117; border: 1.5px solid #2a2d42; border-radius: 10px;
+      padding: 12px 14px; cursor: pointer; font-size: 12px; color: #e2e8f0;
+      transition: all 0.12s; text-align: left; font-family: inherit; line-height: 1.4;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .quiz-opt:active { transform: scale(0.97); background: #1e2030; }
+    .quiz-opt .opt-key { min-width: 22px; height: 22px; border-radius: 6px; background: #2a2d42; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #94a3b8; flex-shrink: 0; }
+    .quiz-opt.correct { border-color: #82b366; background: #1a2a1a; }
+    .quiz-opt.correct .opt-key { background: #82b366; color: #fff; }
+    .quiz-opt.wrong { border-color: #b85450; background: #2a1a1a; }
+    .quiz-opt.wrong .opt-key { background: #b85450; color: #fff; }
+    .quiz-opt.disabled { pointer-events: none; opacity: 0.4; }
+    .quiz-explain { margin-top: 14px; padding: 12px 14px; background: #0f1117; border: 1px solid #2a2d42; border-radius: 10px; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+    .quiz-explain strong { color: #e2e8f0; }
+    .quiz-btn { margin-top: 14px; width: 100%; padding: 13px; background: #6c8ebf; border: none; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .quiz-btn:active { transform: scale(0.98); }
+    .quiz-btn.secondary { background: #2a2d42; margin-top: 8px; }
+
+    /* Results */
+    .results-center { text-align: center; }
+    .score-ring { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid; }
+    .score-ring .sr-num { font-size: 28px; font-weight: 800; }
+    .score-ring .sr-pct { font-size: 10px; opacity: 0.7; }
+    .skill-update-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1e2030; font-size: 11px; }
+    .su-up { color: #82b366; font-weight: 600; }
+    .su-down { color: #b85450; font-weight: 600; }
+    .su-same { color: #4a4d5e; }
+
+    /* Dashboard */
+    .dash-section { background: #1a1d2e; border: 1px solid #2a2d42; border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+    .dash-section h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .pillar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .pillar-row .pr-label { width: 80px; font-size: 11px; color: #94a3b8; text-align: right; flex-shrink: 0; }
+    .pillar-row .pr-bar { flex: 1; height: 18px; background: #0f1117; border-radius: 5px; overflow: hidden; }
+    .pillar-row .pr-fill { height: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 9px; font-weight: 700; color: #fff; min-width: 24px; transition: width 0.4s; }
+    .weak-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #0f1117; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid; }
+    .weak-card .wc-name { flex: 1; font-size: 11px; color: #e2e8f0; }
+    .weak-card .wc-stars { font-size: 10px; font-weight: 600; }
+    .practice-block { background: #0f1117; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+    .practice-block h4 { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .practice-block .pb-time { font-size: 10px; color: #d6b656; font-weight: 600; margin-bottom: 6px; }
+    .practice-step { display: flex; gap: 6px; margin-bottom: 4px; font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .practice-step strong { color: #e2e8f0; }
+    .practice-step .ps-num { min-width: 18px; height: 18px; background: #2a2d42; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #64748b; flex-shrink: 0; }
+    .hist-bars { display: flex; align-items: flex-end; gap: 3px; height: 60px; }
+    .hist-bar { flex: 1; min-width: 6px; max-width: 20px; border-radius: 2px 2px 0 0; }
+
+    /* Quiz FAB */
+    .quiz-fab {
+      position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+      z-index: 90;
+      background: linear-gradient(135deg, #6c8ebf 0%, #5a7dae 100%);
+      color: #fff; border: none; border-radius: 50px;
+      padding: 14px 28px;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(108,142,191,0.4), 0 2px 8px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .quiz-fab:active { transform: translateX(-50%) scale(0.95); box-shadow: 0 2px 10px rgba(108,142,191,0.3); }
+    @media (min-width: 768px) {
+      .quiz-fab:hover { transform: translateX(-50%) scale(1.04); box-shadow: 0 6px 24px rgba(108,142,191,0.5); }
+    }
+
+    /* Radar */
+    .radar-wrap { display: flex; justify-content: center; margin-bottom: 10px; }
   </style>
 </head>
 <body>
-  <div class="title-bar">
-    <h1>🏓♟️ Pickleball Strategy — Grandmaster Edition</h1>
-    <p>Scroll to zoom · Drag to pan · Click nodes to expand</p>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <h1>🏓 Pickleball Strategy</h1>
+      <div class="header-actions">
+        <button id="btnDash" title="Dashboard">📈</button>
+        <button id="btnExport" title="Export">💾</button>
+      </div>
+    </div>
+    <div class="overall-bar"><div class="overall-bar-fill" id="overallBar"></div></div>
+    <div class="pillar-tabs" id="pillarTabs"></div>
   </div>
-  <svg id="mindmap"></svg>
-  <div class="controls">
-    <button id="zoomIn">+</button>
-    <button id="zoomOut">−</button>
-    <button id="resetView">⌂</button>
+
+  <!-- MAIN CONTENT -->
+  <div class="content" id="mainContent"></div>
+
+  <!-- FLOATING QUIZ FAB -->
+  <button class="quiz-fab" id="quizFab">🧠 Quiz Me</button>
+
+  <!-- QUIZ OVERLAY -->
+  <div class="overlay hidden" id="quizOverlay">
+    <button class="overlay-close" id="quizClose">✕</button>
+    <div class="overlay-card" id="quizCard"></div>
   </div>
 
-  <script>
-    const data = {
-      id: 'root', label: 'WIN\nPICKLEBALL', sub: 'Think like a GM', color: '#e2e8f0', bg: '#1a1f2e', stroke: '#1a1f2e',
-      children: [
-        {
-          id: 'score', label: 'SCORE POINTS', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a',
-          children: [
-            { id: 'force_ue', label: 'Force Opponent\nUnforced Errors', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a',
-              children: [
-                { id: 'diff_balls', label: 'Give them\ndifficult balls', sub: '(calibrate to skill level)', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a' },
-                { id: 'exploit', label: 'Exploit their\nweaknesses', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a',
-                  children: [
-                    { id: 'cw', label: 'Create Weaknesses', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a', highlight: true,
-                      children: [
-                        { id: 'w1', label: 'Weak side', sub: '(backhand)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                        { id: 'w2', label: 'Weaker player', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                        { id: 'w3', label: 'Middle', sub: '(confusion)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                        { id: 'w4', label: 'Move laterally', sub: '(open court)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                        { id: 'w5', label: 'Change pace\n& spin', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                        { id: 'w6', label: 'At their feet', sub: '(force pop-ups)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            { id: 'attack', label: 'Attack to Win\nthe Point', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a',
-              children: [
-                { id: 'high_balls', label: 'Best attack:\nHigh balls at kitchen', sub: '(lowest variance)', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a', highlight: true },
-                { id: 'atk_types', label: 'Attack Types', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a',
-                  children: [
-                    { id: 'at1', label: 'Speed-up\nat body/feet', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a' },
-                    { id: 'at2', label: 'Erne', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a' },
-                    { id: 'at3', label: 'Overhead smash', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a' },
-                    { id: 'at4', label: 'Roll volley', sub: '(topspin put-away)', bg: '#d5e8d4', stroke: '#82b366', color: '#1a1a1a' },
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'nolose', label: "DON'T LOSE\nPOINTS", bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a',
-          children: [
-            { id: 'avoid_ue', label: 'Avoid Unforced\nErrors', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a',
-              children: [
-                { id: 'drill', label: 'Drill technique', sub: '(reps build consistency)', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a',
-                  children: [
-                    { id: 'dr1', label: 'Dinks', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                    { id: 'dr2', label: '3rd shot', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                    { id: 'dr3', label: 'Resets', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                  ]
-                },
-                { id: 'margins', label: 'Play with margin', sub: '(2ft over net, 2ft inside lines)', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'smart', label: 'Smart Shot\nSelection', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a',
-              children: [
-                { id: 'ss1', label: 'High % shots', sub: '(unless clear put-away)', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                { id: 'ss2', label: 'Never speed up\nbelow the net', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'defense', label: 'Defense &\nResets', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a',
-              children: [
-                { id: 'def1', label: 'Soft block back\nto kitchen', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                { id: 'def2', label: 'Absorb pace', sub: '(dead paddle, drop weight)', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                { id: 'def3', label: 'Lob to buy time', sub: '(emergency only)', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a' },
-                { id: 'def4', label: 'Survive > hero shot', sub: '(let THEM make the error)', bg: '#f8cecc', stroke: '#b85450', color: '#1a1a1a', highlight: true },
-              ]
-            }
-          ]
-        },
-        {
-          id: 'position', label: 'POSITIONAL\nPLAY', sub: 'Chess: Control key squares', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a',
-          children: [
-            { id: 'kitchen_ctrl', label: 'Kitchen Line\n= Center Control', sub: 'Chess: d4/e4 domination', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a', highlight: true,
-              children: [
-                { id: 'kc1', label: 'Both players at\nkitchen ASAP', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'kc2', label: 'Transition zone\n= no man\'s land', sub: '(pass through, never camp)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'kc3', label: '3rd shot drop =\nyour ticket to net', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'kc4', label: 'Push them BACK\nfrom their line', sub: '(deep dinks, lobs, drives)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'court_geom', label: 'Court Geometry', sub: 'Chess: Piece placement', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a',
-              children: [
-                { id: 'cg1', label: 'Cross-court', sub: '(more margin = safe)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'cg2', label: 'Down the line', sub: '(high risk / reward)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'cg3', label: 'Inside-out angles', sub: '(open up court)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'formation', label: 'Formations', sub: 'Chess: Pawn structure', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a',
-              children: [
-                { id: 'fm1', label: 'Side by side', sub: '(default, cover court)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'fm2', label: 'Stacking', sub: '(keep forehands middle)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'fm3', label: 'Stay parallel', sub: '(move as a unit, no gaps)', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a' },
-                { id: 'fm4', label: 'Overloading', sub: 'Chess: one piece can\'t\nguard both sides', bg: '#dae8fc', stroke: '#6c8ebf', color: '#1a1a1a', highlight: true },
-              ]
-            }
-          ]
-        },
-        {
-          id: 'tempo', label: 'TEMPO &\nINITIATIVE', sub: 'Chess: Who dictates play?', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a',
-          children: [
-            { id: 'opening', label: 'Opening Theory', sub: 'Chess: First 10 moves\nare preparation', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a', highlight: true,
-              children: [
-                { id: 'op1', label: 'Serve deep', sub: '(delay their advance)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                { id: 'op2', label: 'Return deep', sub: '(pin them back)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                { id: 'op3', label: '3rd shot = key move', sub: 'Drop to advance OR\nDrive to pressure', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a', highlight: true },
-                { id: 'op4', label: '5th shot = confirm\nnet position', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'initiative', label: 'Keep Initiative', sub: 'Chess: Make them\nrespond to YOU', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a',
-              children: [
-                { id: 'in1', label: 'Zwischenzug', sub: 'Unexpected in-between\nshot they don\'t expect', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a', highlight: true },
-                { id: 'in2', label: 'Control the pace', sub: '(slow them down or\nspeed them up)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                { id: 'in3', label: 'Dictate rallies', sub: 'Make them react.\nReacting = losing.', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'prophylaxis', label: 'Prophylaxis', sub: 'Chess: Prevent their\nplan before it starts', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a', highlight: true,
-              children: [
-                { id: 'pr1', label: 'Keep ball low', sub: '(deny attackable balls)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                { id: 'pr2', label: 'Don\'t give free\nspeed-up balls', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                { id: 'pr3', label: 'Paddle up, ready', sub: '(preparation = defense)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-                { id: 'pr4', label: 'Cut off angles', sub: '(position to remove\ntheir best options)', bg: '#fff2cc', stroke: '#d6b656', color: '#1a1a1a' },
-              ]
-            }
-          ]
-        },
-        {
-          id: 'psych', label: 'PSYCHOLOGY\n& READS', sub: 'Chess: Know your opponent', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a',
-          children: [
-            { id: 'patterns', label: 'Pattern\nRecognition', sub: 'Chess: 50K positions\nin a GM\'s memory', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a', highlight: true,
-              children: [
-                { id: 'pa1', label: 'Read paddle angle', sub: '(tells you where ball goes)', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-                { id: 'pa2', label: 'Read body position', sub: '(weight shift, shoulder turn)', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-                { id: 'pa3', label: 'Sequence recognition', sub: 'dink dink dink = speed-up\nincoming, be ready', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a', highlight: true },
-              ]
-            },
-            { id: 'adapt', label: 'Mid-Match\nAdaptation', sub: 'Chess: Adjust to\nopponent\'s style', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a',
-              children: [
-                { id: 'ad1', label: 'First 3 games =\nscouting', sub: '(observe, catalog weaknesses)', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-                { id: 'ad2', label: 'They adjusted?\nYou adjust harder.', sub: '(never let them be comfortable)', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-                { id: 'ad3', label: 'Vary your patterns', sub: '(don\'t be predictable = don\'t\nlet THEM read YOU)', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-              ]
-            },
-            { id: 'mental', label: 'Mental\nToughness', sub: 'Chess: Clock pressure\n& endgame grind', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a',
-              children: [
-                { id: 'mt1', label: 'Reset after\nevery point', sub: '(last point is dead,\nnext point is all)', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-                { id: 'mt2', label: 'Play the score', sub: 'Ahead? Be patient.\nBehind? Take calculated risks.', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a', highlight: true },
-                { id: 'mt3', label: 'Endgame mentality', sub: '9-9? Play YOUR game.\nDon\'t tighten up.', bg: '#e1d5e7', stroke: '#9673a6', color: '#1a1a1a' },
-              ]
-            }
-          ]
+  <!-- DASHBOARD OVERLAY -->
+  <div class="overlay hidden" id="dashOverlay">
+    <button class="overlay-close" id="dashClose">✕</button>
+    <div id="dashContent" style="width:100%;max-width:560px;"></div>
+  </div>
+
+<script>
+// ============ DATA ============
+const pillars = [
+  { id: 'score', label: 'Score Points', emoji: '⚔️', color: '#82b366', bg: '#1a2a1a', chess: 'Attack with purpose',
+    groups: [
+      { label: 'Force Errors', skills: [
+        { id: 'diff_balls', label: 'Give difficult balls', sub: 'Calibrate to their skill level' },
+        { id: 'exploit', label: 'Exploit weaknesses', sub: 'Find and attack what they can\'t do' },
+      ]},
+      { label: 'Create Weaknesses', skills: [
+        { id: 'w1', label: 'Attack weak side', sub: 'Usually backhand' },
+        { id: 'w2', label: 'Target weaker player', sub: 'In doubles' },
+        { id: 'w3', label: 'Hit to the middle', sub: 'Creates confusion' },
+        { id: 'w4', label: 'Move them laterally', sub: 'Open up the court' },
+        { id: 'w5', label: 'Change pace & spin', sub: 'Disrupt timing' },
+        { id: 'w6', label: 'Hit at their feet', sub: 'Forces pop-ups' },
+      ]},
+      { label: 'Attacking', skills: [
+        { id: 'high_balls', label: 'Attack high balls at kitchen', sub: 'Lowest variance attack' },
+        { id: 'at1', label: 'Speed-up at body/feet', sub: 'Least reaction time' },
+        { id: 'at2', label: 'Erne', sub: 'Jump around the kitchen' },
+        { id: 'at3', label: 'Overhead smash', sub: 'Punish short lobs' },
+        { id: 'at4', label: 'Roll volley', sub: 'Topspin put-away with control' },
+      ]},
+    ]
+  },
+  { id: 'nolose', label: "Don't Lose", emoji: '🛡️', color: '#b85450', bg: '#2a1a1a', chess: 'Solid defense wins matches',
+    groups: [
+      { label: 'Avoid Errors', skills: [
+        { id: 'drill', label: 'Drill technique', sub: 'Reps build consistency' },
+        { id: 'dr1', label: 'Dink accuracy', sub: 'Placement and consistency' },
+        { id: 'dr2', label: '3rd shot mastery', sub: 'Both drop and drive' },
+        { id: 'dr3', label: 'Reset under pressure', sub: 'Block fast balls softly' },
+      ]},
+      { label: 'Play with Margin', skills: [
+        { id: 'mg1', label: 'Dinks: 5-15cm over net', sub: 'Just clear, unattackable' },
+        { id: 'mg2', label: 'Drives: as low as possible', sub: 'No free balls' },
+        { id: 'mg3', label: 'Land 60cm inside lines', sub: 'Don\'t sail out' },
+      ]},
+      { label: 'Smart Shot Selection', skills: [
+        { id: 'ss1', label: 'High % shots', sub: 'Unless clear put-away' },
+        { id: 'ss2', label: 'Never speed up below net', sub: 'Hitting up = giving them the ball' },
+      ]},
+      { label: 'Defense & Resets', skills: [
+        { id: 'def1', label: 'Soft block to kitchen', sub: 'Reset the rally' },
+        { id: 'def2', label: 'Absorb pace (dead paddle)', sub: 'Soft hands, drop weight' },
+        { id: 'def3', label: 'Emergency lob', sub: 'Buy time to recover' },
+        { id: 'def4', label: 'Survive > hero shot', sub: 'Let THEM make the error' },
+      ]},
+    ]
+  },
+  { id: 'position', label: 'Positional', emoji: '♟️', color: '#6c8ebf', bg: '#1a1e2a', chess: 'Control key squares',
+    groups: [
+      { label: 'Kitchen Line = Center Control', skills: [
+        { id: 'kc1', label: 'Both at kitchen ASAP', sub: 'The team that gets there first wins' },
+        { id: 'kc2', label: 'Transition zone = no man\'s land', sub: 'Pass through, never camp' },
+        { id: 'kc3', label: '3rd shot drop = ticket to net', sub: 'Your way to advance' },
+        { id: 'kc4', label: 'Push them back from their line', sub: 'Deep dinks, lobs, drives' },
+      ]},
+      { label: 'Court Geometry', skills: [
+        { id: 'cg1', label: 'Cross-court = safe', sub: 'More margin, lower net' },
+        { id: 'cg2', label: 'Down the line = high risk/reward', sub: 'Use when they cheat cross-court' },
+        { id: 'cg3', label: 'Inside-out angles', sub: 'Pull them wide, open gaps' },
+      ]},
+      { label: 'Formations', skills: [
+        { id: 'fm1', label: 'Side by side', sub: 'Default, cover court' },
+        { id: 'fm2', label: 'Stacking', sub: 'Keep forehands in middle' },
+        { id: 'fm3', label: 'Stay parallel', sub: 'Move as a unit, no gaps' },
+        { id: 'fm4', label: 'Overloading', sub: 'One piece can\'t guard both sides', chess: true },
+      ]},
+    ]
+  },
+  { id: 'tempo', label: 'Tempo', emoji: '⏱️', color: '#d6b656', bg: '#2a2518', chess: 'Who dictates play?',
+    groups: [
+      { label: 'Opening Theory', skills: [
+        { id: 'op1', label: 'Serve deep', sub: 'Delay their advance' },
+        { id: 'op2', label: 'Return deep', sub: 'Pin them at baseline' },
+        { id: 'op3', label: '3rd shot = key move', sub: 'Drop to advance OR drive to pressure' },
+        { id: 'op4', label: '5th shot = confirm position', sub: 'Secure the net' },
+      ]},
+      { label: 'Keep Initiative', skills: [
+        { id: 'in1', label: 'Zwischenzug', sub: 'Unexpected in-between shot', chess: true },
+        { id: 'in2', label: 'Control the pace', sub: 'Give them what they don\'t want' },
+        { id: 'in3', label: 'Dictate rallies', sub: 'Reacting = losing' },
+      ]},
+      { label: 'Prophylaxis', skills: [
+        { id: 'pr1', label: 'Keep ball low', sub: 'Deny attackable balls' },
+        { id: 'pr2', label: 'No free speed-up balls', sub: 'Every dink below net height' },
+        { id: 'pr3', label: 'Paddle up, ready', sub: 'Preparation = defense' },
+        { id: 'pr4', label: 'Cut off angles', sub: 'Remove their best options' },
+      ]},
+    ]
+  },
+  { id: 'psych', label: 'Psychology', emoji: '🧠', color: '#9673a6', bg: '#221a2a', chess: 'Know your opponent',
+    groups: [
+      { label: 'Pattern Recognition', skills: [
+        { id: 'pa1', label: 'Read paddle angle', sub: 'Predicts ball direction' },
+        { id: 'pa2', label: 'Read body position', sub: 'Weight shift, shoulder turn' },
+        { id: 'pa3', label: 'Sequence recognition', sub: 'Dink dink dink = speed-up coming' },
+      ]},
+      { label: 'Mid-Match Adaptation', skills: [
+        { id: 'ad1', label: 'First 3 games = scouting', sub: 'Observe, catalog weaknesses' },
+        { id: 'ad2', label: 'They adjusted? Adjust harder', sub: 'Never let them be comfortable' },
+        { id: 'ad3', label: 'Vary your patterns', sub: 'Don\'t let them read you' },
+      ]},
+      { label: 'Mental Toughness', skills: [
+        { id: 'mt1', label: 'Reset after every point', sub: 'Last point is dead' },
+        { id: 'mt2', label: 'Play the score', sub: 'Ahead = patient, Behind = calculated risks' },
+        { id: 'mt3', label: 'Endgame mentality', sub: '9-9? Play YOUR game' },
+      ]},
+    ]
+  },
+];
+
+// Flat skill lookup
+const skillMap = {};
+const allSkillIds = [];
+pillars.forEach(p => p.groups.forEach(g => g.skills.forEach(s => { skillMap[s.id] = { ...s, pillar: p }; allSkillIds.push(s.id); })));
+
+// ============ STATE ============
+const SK = 'pickleball-gm-ratings';
+const QHK = 'pickleball-gm-quiz-history';
+const QSK = 'pickleball-gm-quiz-scores';
+let ratings = JSON.parse(localStorage.getItem(SK) || '{}');
+let quizHistory = JSON.parse(localStorage.getItem(QHK) || '{}');
+let quizScoreHistory = JSON.parse(localStorage.getItem(QSK) || '[]');
+let activePillar = 'score';
+let expandedSkill = null;
+let collapsedGroups = new Set();
+
+function save() { localStorage.setItem(SK, JSON.stringify(ratings)); }
+function saveQH() { localStorage.setItem(QHK, JSON.stringify(quizHistory)); }
+function saveQS() { localStorage.setItem(QSK, JSON.stringify(quizScoreHistory)); }
+function getRating(id) { return ratings[id] || { score: 0, notes: '' }; }
+function setRating(id, score, notes) { ratings[id] = { score, notes, updated: new Date().toISOString() }; save(); }
+
+const levels = ['','Beginner','Developing','Competent','Advanced','Elite'];
+const levelColors = ['#4a4d5e','#c0392b','#d68910','#d4ac0d','#7dcea0','#27ae60'];
+
+// ============ RENDER ============
+function renderTabs() {
+  const tabs = document.getElementById('pillarTabs');
+  tabs.innerHTML = pillars.map(p => {
+    const stats = getPillarStats(p);
+    return `<div class="pillar-tab ${p.id === activePillar ? 'active' : ''}" data-id="${p.id}" style="${p.id === activePillar ? `background:${p.bg};border-color:${p.color};color:#fff` : ''}">${p.emoji} ${p.label}<span class="tab-score">${stats.avg > 0 ? stats.avg.toFixed(1) : ''}</span></div>`;
+  }).join('');
+  tabs.querySelectorAll('.pillar-tab').forEach(t => t.onclick = () => { activePillar = t.dataset.id; renderTabs(); renderContent(); });
+}
+
+function getPillarStats(p) {
+  let total = 0, rated = 0, sum = 0;
+  p.groups.forEach(g => g.skills.forEach(s => { total++; const r = getRating(s.id); if (r.score > 0) { rated++; sum += r.score; } }));
+  return { total, rated, sum, avg: rated > 0 ? sum / rated : 0 };
+}
+
+function renderOverallBar() {
+  let total = 0, rated = 0;
+  allSkillIds.forEach(id => { total++; if (getRating(id).score > 0) rated++; });
+  document.getElementById('overallBar').style.width = `${Math.round(rated / total * 100)}%`;
+}
+
+function renderContent() {
+  const p = pillars.find(p => p.id === activePillar);
+  const stats = getPillarStats(p);
+  const content = document.getElementById('mainContent');
+
+  let html = `<div class="pillar-hero" style="background:${p.bg};border:1px solid ${p.color}33">
+    <h2 style="color:${p.color}">${p.emoji} ${p.label}</h2>
+    <div class="chess-sub">♟️ ${esc(p.chess)}</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hs-val" style="color:${p.color}">${stats.avg > 0 ? stats.avg.toFixed(1) : '—'}</div><div class="hs-label">Avg Level</div></div>
+      <div class="hero-stat"><div class="hs-val" style="color:${p.color}">${stats.rated}/${stats.total}</div><div class="hs-label">Rated</div></div>
+    </div>
+  </div>`;
+
+  p.groups.forEach(g => {
+    const gKey = p.id + '_' + g.label;
+    const isCollapsed = collapsedGroups.has(gKey);
+    const gRated = g.skills.filter(s => getRating(s.id).score > 0).length;
+
+    html += `<div class="skill-group">
+      <div class="skill-group-header ${isCollapsed ? 'collapsed' : ''}" data-gkey="${esc(gKey)}">
+        <h3>${esc(g.label)}</h3>
+        <span class="sg-badge">${gRated}/${g.skills.length}</span>
+        <span class="sg-chevron">▼</span>
+      </div>`;
+
+    if (!isCollapsed) {
+      g.skills.forEach(s => {
+        const r = getRating(s.id);
+        const isExp = expandedSkill === s.id;
+        const dotColor = p.color;
+
+        html += `<div class="skill-card ${isExp ? 'expanded' : ''}" data-sid="${s.id}">
+          <div class="skill-card-top">
+            <div>
+              <div class="sc-label">${esc(s.label)}</div>
+              <div class="sc-sub">${esc(s.sub)}</div>
+              ${s.chess ? '<div class="sc-chess">♟️ Chess concept</div>' : ''}
+            </div>
+            <div class="sc-dots">${[1,2,3,4,5].map(i => `<div class="sc-dot ${i <= r.score ? 'filled' : ''}" style="border-color:${i <= r.score ? levelColors[i] : '#2a2d42'};background:${i <= r.score ? levelColors[i] : 'transparent'}"></div>`).join('')}</div>
+          </div>`;
+
+        if (isExp) {
+          html += `<div class="sc-expanded">
+            <div class="sc-rate-row">
+              <span class="sc-rate-label">Skill level</span>
+              <div class="sc-rate-btns">${[1,2,3,4,5].map(i => `<button class="sc-rate-btn ${r.score === i ? 'active' : ''}" data-val="${i}" style="${r.score === i ? `background:${levelColors[i]};border-color:${levelColors[i]}` : ''}">${i}</button>`).join('')}</div>
+              ${r.score > 0 ? `<button class="sc-rate-clear" data-sid="${s.id}">✕</button>` : ''}
+            </div>
+            <div class="level-labels">
+              <span>Beginner</span>
+              <span class="current" style="color:${r.score > 0 ? levelColors[r.score] : '#4a4d5e'}">${r.score > 0 ? levels[r.score] : 'Not rated'}</span>
+              <span>Elite</span>
+            </div>
+            <div class="sc-notes"><textarea placeholder="Notes, drills, things to practice..." data-sid="${s.id}">${esc(r.notes || '')}</textarea></div>
+          </div>`;
         }
-      ]
-    };
-
-    // Layout engine
-    const NODE_W = 160, NODE_H_BASE = 44, PAD_X = 40, PAD_Y = 24, SUB_SIZE = 10;
-    const svg = document.getElementById('mindmap');
-    let viewBox = { x: 0, y: 0, w: 1600, h: 900 };
-    let nodes = [], edges = [];
-    let collapsed = new Set();
-
-    function nodeHeight(d) {
-      let h = NODE_H_BASE;
-      const lines = (d.label || '').split('\n').length;
-      if (lines > 1) h += (lines - 1) * 14;
-      if (d.sub) h += (d.sub.split('\n').length) * 12 + 4;
-      return h;
-    }
-
-    function subtreeSize(d) {
-      if (!d.children || d.children.length === 0 || collapsed.has(d.id)) return nodeHeight(d) + PAD_Y;
-      let total = 0;
-      for (const c of d.children) total += subtreeSize(c);
-      return Math.max(total, nodeHeight(d) + PAD_Y);
-    }
-
-    function layout(d, x, y, availH) {
-      const h = nodeHeight(d);
-      const nx = x, ny = y + availH / 2 - h / 2;
-      nodes.push({ ...d, x: nx, y: ny, w: NODE_W, h, depth: d._depth || 0 });
-
-      if (d.children && d.children.length > 0 && !collapsed.has(d.id)) {
-        const childX = x + NODE_W + PAD_X;
-        let totalH = 0;
-        const sizes = d.children.map(c => { c._depth = (d._depth || 0) + 1; return subtreeSize(c); });
-        for (const s of sizes) totalH += s;
-        let curY = y + (availH - totalH) / 2;
-        for (let i = 0; i < d.children.length; i++) {
-          const ch = sizes[i];
-          layout(d.children[i], childX, curY, ch);
-          const childNode = nodes[nodes.length - 1];
-          edges.push({
-            x1: nx + NODE_W, y1: ny + h / 2,
-            x2: childX, y2: curY + ch / 2,
-            stroke: d.stroke || '#666', depth: (d._depth || 0)
-          });
-          curY += ch;
-        }
-      }
-    }
-
-    function render() {
-      nodes = []; edges = [];
-      data._depth = 0;
-      const totalH = subtreeSize(data);
-      layout(data, 40, 0, totalH);
-
-      // compute bounds
-      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      for (const n of nodes) {
-        minX = Math.min(minX, n.x);
-        minY = Math.min(minY, n.y);
-        maxX = Math.max(maxX, n.x + n.w);
-        maxY = Math.max(maxY, n.y + n.h);
-      }
-      const pad = 60;
-      viewBox = { x: minX - pad, y: minY - pad, w: maxX - minX + pad * 2, h: maxY - minY + pad * 2 };
-
-      let html = '';
-
-      // edges
-      for (const e of edges) {
-        const mx = (e.x1 + e.x2) / 2;
-        const sw = Math.max(1.5, 3 - e.depth * 0.5);
-        html += `<path d="M${e.x1},${e.y1} C${mx},${e.y1} ${mx},${e.y2} ${e.x2},${e.y2}" fill="none" stroke="${e.stroke}" stroke-width="${sw}" opacity="0.6"/>`;
-      }
-
-      // nodes
-      for (const n of nodes) {
-        const isRoot = n.id === 'root';
-        const rx = isRoot ? n.w / 2 : 8;
-        const ry = isRoot ? n.h / 2 : 8;
-        const hasKids = n.children && n.children.length > 0;
-        const isCollapsed = collapsed.has(n.id);
-        const shadowColor = n.highlight ? n.stroke : 'rgba(0,0,0,0.3)';
-        const shadowBlur = n.highlight ? 8 : 4;
-
-        html += `<g class="node" data-id="${n.id}" style="cursor:${hasKids ? 'pointer' : 'default'}">`;
-        html += `<defs><filter id="shadow-${n.id}"><feDropShadow dx="0" dy="2" stdDeviation="${shadowBlur}" flood-color="${shadowColor}" flood-opacity="0.4"/></filter></defs>`;
-
-        if (isRoot) {
-          html += `<ellipse cx="${n.x + n.w / 2}" cy="${n.y + n.h / 2}" rx="${rx}" ry="${ry}" fill="${n.bg}" stroke="${n.stroke}" stroke-width="3" filter="url(#shadow-${n.id})"/>`;
-        } else {
-          html += `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8" fill="${n.bg}" stroke="${n.stroke}" stroke-width="${n.highlight ? 2.5 : 1.5}" filter="url(#shadow-${n.id})"/>`;
-        }
-
-        // label
-        const labelLines = (n.label || '').split('\n');
-        const subLines = n.sub ? n.sub.split('\n') : [];
-        const totalTextH = labelLines.length * 16 + subLines.length * 12;
-        let ty = n.y + n.h / 2 - totalTextH / 2 + 12;
-
-        for (const line of labelLines) {
-          const bold = n.depth <= 1 || line === line.toUpperCase();
-          html += `<text x="${n.x + n.w / 2}" y="${ty}" text-anchor="middle" fill="${n.color || '#1a1a1a'}" font-size="${isRoot ? 16 : 12}" font-weight="${bold ? 700 : 600}" font-family="Inter, system-ui, sans-serif">${escHtml(line)}</text>`;
-          ty += 16;
-        }
-        for (const line of subLines) {
-          html += `<text x="${n.x + n.w / 2}" y="${ty}" text-anchor="middle" fill="${n.color || '#1a1a1a'}" font-size="9" opacity="0.6" font-family="Inter, system-ui, sans-serif">${escHtml(line)}</text>`;
-          ty += 12;
-        }
-
-        // collapse indicator
-        if (hasKids) {
-          const cx = n.x + n.w - 10, cy = n.y + 10;
-          html += `<circle cx="${cx}" cy="${cy}" r="6" fill="${n.stroke}" opacity="0.5"/>`;
-          html += `<text x="${cx}" y="${cy + 3.5}" text-anchor="middle" fill="white" font-size="9" font-weight="bold">${isCollapsed ? '+' : '−'}</text>`;
-        }
-
-        html += `</g>`;
-      }
-
-      // banner
-      const bannerY = viewBox.y + viewBox.h - 80;
-      const bannerX = viewBox.x + viewBox.w / 2;
-      html += `<rect x="${bannerX - 340}" y="${bannerY}" width="680" height="50" rx="10" fill="#1a1f2e" stroke="#333" stroke-width="1"/>`;
-      html += `<text x="${bannerX}" y="${bannerY + 22}" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="700" font-family="Inter, system-ui, sans-serif">THE GM PRINCIPLE: Every shot is a move. Every move has a PURPOSE.</text>`;
-      html += `<text x="${bannerX}" y="${bannerY + 38}" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Inter, system-ui, sans-serif">If you can't explain WHY you hit that shot, you shouldn't have hit it.</text>`;
-
-      svg.innerHTML = html;
-      svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`);
-
-      // click handlers
-      svg.querySelectorAll('.node').forEach(g => {
-        g.addEventListener('click', () => {
-          const id = g.dataset.id;
-          const nd = findNode(data, id);
-          if (nd && nd.children && nd.children.length > 0) {
-            if (collapsed.has(id)) collapsed.delete(id); else collapsed.add(id);
-            render();
-          }
-        });
+        html += '</div>';
       });
     }
+    html += '</div>';
+  });
 
-    function findNode(d, id) {
-      if (d.id === id) return d;
-      if (d.children) for (const c of d.children) { const r = findNode(c, id); if (r) return r; }
-      return null;
-    }
+  // GM principle
+  html += `<div style="text-align:center;padding:20px 16px;margin-top:8px;background:#1a1d2e;border-radius:12px;border:1px solid #2a2d42">
+    <div style="font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:4px">THE GM PRINCIPLE</div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.5">Every shot is a move. Every move has a purpose.<br>If you can't explain WHY you hit that shot, you shouldn't have hit it.</div>
+  </div>`;
 
-    function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  content.innerHTML = html;
 
-    // Pan & zoom
-    let isPanning = false, panStart = { x: 0, y: 0 }, vbStart = {};
-    svg.addEventListener('mousedown', e => { if (e.target === svg || e.target.tagName === 'path') { isPanning = true; panStart = { x: e.clientX, y: e.clientY }; vbStart = { ...viewBox }; }});
-    window.addEventListener('mousemove', e => { if (!isPanning) return; const scale = viewBox.w / svg.clientWidth; viewBox.x = vbStart.x - (e.clientX - panStart.x) * scale; viewBox.y = vbStart.y - (e.clientY - panStart.y) * scale; svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`); });
-    window.addEventListener('mouseup', () => isPanning = false);
-    svg.addEventListener('wheel', e => { e.preventDefault(); const factor = e.deltaY > 0 ? 1.1 : 0.9; const rect = svg.getBoundingClientRect(); const mx = viewBox.x + (e.clientX - rect.left) / rect.width * viewBox.w; const my = viewBox.y + (e.clientY - rect.top) / rect.height * viewBox.h; viewBox.w *= factor; viewBox.h *= factor; viewBox.x = mx - (e.clientX - rect.left) / rect.width * viewBox.w; viewBox.y = my - (e.clientY - rect.top) / rect.height * viewBox.h; svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`); }, { passive: false });
+  // Event binding
+  content.querySelectorAll('.skill-group-header').forEach(h => {
+    h.onclick = () => {
+      const key = h.dataset.gkey;
+      collapsedGroups.has(key) ? collapsedGroups.delete(key) : collapsedGroups.add(key);
+      renderContent();
+    };
+  });
 
-    // Touch support
-    let lastTouchDist = 0, lastTouchCenter = null;
-    svg.addEventListener('touchstart', e => { if (e.touches.length === 1) { isPanning = true; panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY }; vbStart = { ...viewBox }; } else if (e.touches.length === 2) { isPanning = false; lastTouchDist = Math.hypot(e.touches[1].clientX - e.touches[0].clientX, e.touches[1].clientY - e.touches[0].clientY); lastTouchCenter = { x: (e.touches[0].clientX + e.touches[1].clientX) / 2, y: (e.touches[0].clientY + e.touches[1].clientY) / 2 }; vbStart = { ...viewBox }; }}, { passive: true });
-    svg.addEventListener('touchmove', e => { e.preventDefault(); if (e.touches.length === 1 && isPanning) { const scale = viewBox.w / svg.clientWidth; viewBox.x = vbStart.x - (e.touches[0].clientX - panStart.x) * scale; viewBox.y = vbStart.y - (e.touches[0].clientY - panStart.y) * scale; svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`); } else if (e.touches.length === 2 && lastTouchCenter) { const dist = Math.hypot(e.touches[1].clientX - e.touches[0].clientX, e.touches[1].clientY - e.touches[0].clientY); const factor = lastTouchDist / dist; const rect = svg.getBoundingClientRect(); const mx = vbStart.x + (lastTouchCenter.x - rect.left) / rect.width * vbStart.w; const my = vbStart.y + (lastTouchCenter.y - rect.top) / rect.height * vbStart.h; viewBox.w = vbStart.w * factor; viewBox.h = vbStart.h * factor; viewBox.x = mx - (lastTouchCenter.x - rect.left) / rect.width * viewBox.w; viewBox.y = my - (lastTouchCenter.y - rect.top) / rect.height * viewBox.h; svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`); }}, { passive: false });
-    svg.addEventListener('touchend', () => { isPanning = false; lastTouchDist = 0; lastTouchCenter = null; });
+  content.querySelectorAll('.skill-card').forEach(card => {
+    card.onclick = e => {
+      if (e.target.closest('.sc-rate-btn') || e.target.closest('.sc-rate-clear') || e.target.closest('textarea')) return;
+      const sid = card.dataset.sid;
+      expandedSkill = expandedSkill === sid ? null : sid;
+      renderContent();
+    };
+  });
 
-    // Controls
-    document.getElementById('zoomIn').onclick = () => { const cx = viewBox.x + viewBox.w / 2, cy = viewBox.y + viewBox.h / 2; viewBox.w *= 0.8; viewBox.h *= 0.8; viewBox.x = cx - viewBox.w / 2; viewBox.y = cy - viewBox.h / 2; svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`); };
-    document.getElementById('zoomOut').onclick = () => { const cx = viewBox.x + viewBox.w / 2, cy = viewBox.y + viewBox.h / 2; viewBox.w *= 1.25; viewBox.h *= 1.25; viewBox.x = cx - viewBox.w / 2; viewBox.y = cy - viewBox.h / 2; svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`); };
-    document.getElementById('resetView').onclick = () => { render(); };
+  content.querySelectorAll('.sc-rate-btn').forEach(btn => {
+    btn.onclick = () => {
+      const sid = btn.closest('.skill-card').dataset.sid;
+      const v = parseInt(btn.dataset.val);
+      const cur = getRating(sid);
+      setRating(sid, cur.score === v ? 0 : v, cur.notes || '');
+      renderContent(); renderOverallBar(); renderTabs();
+    };
+  });
 
-    render();
-  </script>
+  content.querySelectorAll('.sc-rate-clear').forEach(btn => {
+    btn.onclick = () => {
+      const sid = btn.dataset.sid;
+      const cur = getRating(sid);
+      setRating(sid, 0, cur.notes || '');
+      renderContent(); renderOverallBar(); renderTabs();
+    };
+  });
+
+  content.querySelectorAll('.sc-notes textarea').forEach(ta => {
+    ta.onclick = e => e.stopPropagation();
+    ta.oninput = () => { const sid = ta.dataset.sid; const cur = getRating(sid); setRating(sid, cur.score || 0, ta.value); };
+  });
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ============ QUIZ ============
+const questions = [
+  { skill:'diff_balls',cat:'Force Errors',diff:2,scenario:'You\'re playing against a 3.0 player who keeps returning every ball.',question:'What\'s the best strategy to force unforced errors?',options:[{text:'Hit harder every time',correct:false},{text:'Give them balls difficult relative to their skill level',correct:true},{text:'Only go for winners',correct:false},{text:'Wait for them to make mistakes',correct:false}],explanation:'Calibrate difficulty to their level. A 3.0 might break down on deep dinks or pace changes, while a 5.0 needs much more pressure.'},
+  { skill:'w1',cat:'Create Weaknesses',diff:1,scenario:'Your opponent has a strong forehand but their backhand floats high every time.',question:'Where should you target most of your shots?',options:[{text:'Down the middle',correct:false},{text:'To their forehand',correct:false},{text:'To their backhand',correct:true},{text:'Alternate randomly',correct:false}],explanation:'Attack the weak side. If their backhand pops up, you get attackable balls.'},
+  { skill:'w2',cat:'Create Weaknesses',diff:1,scenario:'In doubles, one opponent is a 4.5 and the other is a 3.0.',question:'Who should you primarily target?',options:[{text:'The 4.5 to demoralize them',correct:false},{text:'Alternate equally',correct:false},{text:'The 3.0 — more likely to error',correct:true},{text:'Just hit wherever',correct:false}],explanation:'Target the weaker player. The 3.0 breaks down faster under targeted pressure.'},
+  { skill:'w3',cat:'Create Weaknesses',diff:2,scenario:'Both opponents are at the kitchen communicating well.',question:'Most effective place to dink?',options:[{text:'Cross-court to the stronger player',correct:false},{text:'Down the line',correct:false},{text:'Right at the middle between them',correct:true},{text:'Lob over their heads',correct:false}],explanation:'The middle creates confusion — both hesitate on who takes it.'},
+  { skill:'w4',cat:'Create Weaknesses',diff:2,scenario:'Opponents are shoulder to shoulder, covering the middle well.',question:'How do you create an opening?',options:[{text:'Hit to the middle harder',correct:false},{text:'Move them laterally with wide angles',correct:true},{text:'Lob every shot',correct:false},{text:'Hit only to one player',correct:false}],explanation:'Wide angles pull players apart, opening gaps.'},
+  { skill:'w5',cat:'Create Weaknesses',diff:3,scenario:'Your opponent has settled into a comfortable rhythm at the kitchen.',question:'How do you disrupt their timing?',options:[{text:'Hit every ball harder',correct:false},{text:'Change pace and spin',correct:true},{text:'Switch to lobbing only',correct:false},{text:'Hit to the same spot consistently',correct:false}],explanation:'Change of pace and spin disrupts timing and produces weak returns.'},
+  { skill:'w6',cat:'Create Weaknesses',diff:3,scenario:'Both opponents at the kitchen. You need an attackable ball.',question:'Most reliable way to get a pop-up?',options:[{text:'Hard drive at them',correct:false},{text:'Dink at their feet',correct:true},{text:'Lob deep',correct:false},{text:'Middle with pace',correct:false}],explanation:'Balls at the feet are mechanically difficult to keep low — forces pop-ups.'},
+  { skill:'high_balls',cat:'Attacking',diff:1,scenario:'You\'re at the kitchen and see a ball rising above net height.',question:'Highest percentage attack?',options:[{text:'Lob over them',correct:false},{text:'Speed-up at their body/feet',correct:true},{text:'Try an Erne',correct:false},{text:'Dink it back',correct:false}],explanation:'High balls at the kitchen = lowest variance attacks. Body/feet gives least reaction time.'},
+  { skill:'at1',cat:'Attack Types',diff:2,scenario:'Ball above net height at the kitchen. Both opponents in position.',question:'Where should you aim your speed-up?',options:[{text:'Wide to sideline',correct:false},{text:'At their body or feet',correct:true},{text:'High and deep',correct:false},{text:'Softly into kitchen',correct:false}],explanation:'Body gives least reaction time, feet forces hitting up.'},
+  { skill:'at2',cat:'Attack Types',diff:4,scenario:'Opponent keeps dinking cross-court to your sideline predictably.',question:'What advanced attack could you execute?',options:[{text:'Keep dinking',correct:false},{text:'Speed up middle',correct:false},{text:'Erne — jump around the kitchen',correct:true},{text:'Lob backhand',correct:false}],explanation:'An Erne exploits predictable cross-court dinks. You anticipate the path and volley outside the sideline.'},
+  { skill:'at3',cat:'Attack Types',diff:2,scenario:'Opponent hits a high lob that\'s dropping short.',question:'Best attacking option?',options:[{text:'Let it bounce and drive',correct:false},{text:'Overhead smash',correct:true},{text:'Soft drop to kitchen',correct:false},{text:'Lob it back',correct:false}],explanation:'Short lob = gift. Overhead smash ends the point decisively.'},
+  { skill:'at4',cat:'Attack Types',diff:3,scenario:'Medium-height ball at kitchen. You want attack with control, not just power.',question:'What shot combines attack with accuracy?',options:[{text:'Flat speed-up max power',correct:false},{text:'Roll volley — topspin put-away that dips',correct:true},{text:'Soft drop',correct:false},{text:'Lob over them',correct:false}],explanation:'Roll volley uses topspin for net clearance then sharp dip. More margin than a flat blast.'},
+  { skill:'drill',cat:'Avoid Errors',diff:1,question:'Most effective way to reduce unforced errors over time?',options:[{text:'Play more tournaments',correct:false},{text:'Watch pro matches',correct:false},{text:'Drill specific techniques with repetition',correct:true},{text:'Buy a better paddle',correct:false}],explanation:'Repetition builds muscle memory and consistency.'},
+  { skill:'dr1',cat:'Drilling',diff:2,question:'When drilling dinks, what should you focus on most?',options:[{text:'Power',correct:false},{text:'Placement and consistency',correct:true},{text:'Maximum spin',correct:false},{text:'Speed',correct:false}],explanation:'Placement and consistency win kitchen battles. Accuracy is the foundation.'},
+  { skill:'dr2',cat:'Drilling',diff:2,question:'Most important thing to practice with third shot drills?',options:[{text:'Always dropping',correct:false},{text:'Hitting winners',correct:false},{text:'Both drop and drive, and knowing when to use each',correct:true},{text:'Only from one side',correct:false}],explanation:'You need both in your toolkit. Drill both and develop judgment for when each is appropriate.'},
+  { skill:'dr3',cat:'Drilling',diff:3,scenario:'Your biggest weakness: you pop the ball up when opponents speed up at you.',question:'What drill should you prioritize?',options:[{text:'Serve practice',correct:false},{text:'Overhead smashes',correct:false},{text:'Reset drills — blocking fast balls softly',correct:true},{text:'Dink-only rallies',correct:false}],explanation:'Resets are the defensive foundation. Trains your hands to absorb speed.'},
+  { skill:'mg1',cat:'Margin',diff:2,scenario:'Your last two dinks hit the net.',question:'How much clearance for dinks?',options:[{text:'1cm over — as low as possible',correct:false},{text:'5-15cm (2-6 inches)',correct:true},{text:'60cm (2 feet)',correct:false},{text:'Doesn\'t matter if it lands in kitchen',correct:false}],explanation:'5-15cm is the sweet spot. Too low = net. Too high = attackable. 60cm is a kill ball.'},
+  { skill:'mg2',cat:'Margin',diff:2,scenario:'Hitting a forehand drive from mid-court.',question:'How much net clearance for drives?',options:[{text:'As low as possible while clearing',correct:true},{text:'30cm above',correct:false},{text:'60cm above',correct:false},{text:'Hit the net tape',correct:false}],explanation:'Low, flat drives give opponents less time and are harder to return.'},
+  { skill:'mg3',cat:'Margin',diff:1,scenario:'Last three serves went long.',question:'How much inside the lines should you aim?',options:[{text:'Right on the line',correct:false},{text:'About 60cm (2ft) inside',correct:true},{text:'Very center of the box',correct:false},{text:'Doesn\'t matter',correct:false}],explanation:'60cm margin lets you be deep without sailing out. Smart players build in margins.'},
+  { skill:'ss1',cat:'Shot Selection',diff:2,scenario:'At the kitchen. No obvious opening, both opponents positioned well.',question:'What shot should you hit?',options:[{text:'Low % winner down the line',correct:false},{text:'Speed up at closest player',correct:false},{text:'High % shot — keep ball in play, wait for opening',correct:true},{text:'Lob deep',correct:false}],explanation:'Without a clear put-away, play high percentage. Patience wins more than forcing.'},
+  { skill:'ss2',cat:'Shot Selection',diff:2,scenario:'At the kitchen. Ball is below net height but you want to speed up.',question:'Should you attack?',options:[{text:'Yes — surprise them',correct:false},{text:'No — never speed up from below the net',correct:true},{text:'Only if aimed at backhand',correct:false},{text:'Only on your forehand side',correct:false}],explanation:'Below net = hitting upward = giving them time and a ball to counter-attack.'},
+  { skill:'def1',cat:'Defense',diff:2,scenario:'Opponent ripped a forehand at you at the kitchen. You got your paddle on it.',question:'Where should your block go?',options:[{text:'Hard back at them',correct:false},{text:'Soft block to the kitchen',correct:true},{text:'High and deep',correct:false},{text:'Wide to sideline',correct:false}],explanation:'Soft block to kitchen resets the rally. Now they have to hit up.'},
+  { skill:'def2',cat:'Defense',diff:3,scenario:'Opponents drive hard at you. Your blocks keep going long.',question:'What technique to absorb pace?',options:[{text:'Swing harder to match',correct:false},{text:'Dead paddle — loosen grip, drop weight on contact',correct:true},{text:'Always step back',correct:false},{text:'Switch to heavier paddle',correct:false}],explanation:'Dead paddle = soft hands absorbing energy. Like catching an egg.'},
+  { skill:'def3',cat:'Defense',diff:2,scenario:'Both opponents attacking aggressively. You\'re scrambling.',question:'When is a defensive lob OK?',options:[{text:'Never',correct:false},{text:'As primary strategy',correct:false},{text:'Emergency only — need time to recover',correct:true},{text:'Whenever at the kitchen',correct:false}],explanation:'Lobs are emergency reset buttons. Use sparingly, make them high and deep.'},
+  { skill:'def4',cat:'Defense',diff:3,scenario:'Hard drive at you, you\'re off balance at the kitchen.',question:'What should you do?',options:[{text:'Counter-attack harder',correct:false},{text:'Block softly — survive the point',correct:true},{text:'Lob immediately',correct:false},{text:'Step back for passing shot',correct:false}],explanation:'Survive > hero shot. Soft block resets and forces them to beat you again.'},
+  { skill:'kc1',cat:'Positional',diff:1,question:'After the return of serve, what should the returning team do?',options:[{text:'Both stay at baseline',correct:false},{text:'One to kitchen, one stays back',correct:false},{text:'Both advance to kitchen line together',correct:true},{text:'Both to transition zone',correct:false}],explanation:'Both at the kitchen ASAP. The returning team has the advantage — use it.'},
+  { skill:'kc2',cat:'Positional',diff:2,question:'What should you do in the transition zone?',options:[{text:'Camp there and volley',correct:false},{text:'Pass through quickly to the kitchen',correct:true},{text:'Stay if ball is coming fast',correct:false},{text:'Move back to baseline',correct:false}],explanation:'Transition zone is no man\'s land. Balls at your feet here are devastating.'},
+  { skill:'kc3',cat:'Positional',diff:2,scenario:'Serving team at baseline after deep return. Opponents at kitchen.',question:'Best shot to get to the kitchen?',options:[{text:'Hard drive deep',correct:false},{text:'Third shot drop into kitchen',correct:true},{text:'Lob over them',correct:false},{text:'Passing shot down the line',correct:false}],explanation:'Third shot drop is your ticket to the net. Forces them to hit up while you advance.'},
+  { skill:'kc4',cat:'Positional',diff:3,scenario:'Both opponents established at kitchen line.',question:'How to push them back?',options:[{text:'Short dinks only',correct:false},{text:'Deep dinks, lobs, or drives at feet',correct:true},{text:'Only middle',correct:false},{text:'Slow down completely',correct:false}],explanation:'Mix deep dinks, lobs, and drives to keep them from settling at the kitchen.'},
+  { skill:'cg1',cat:'Geometry',diff:1,scenario:'Dinking from kitchen. Cross-court or down the line?',question:'Which direction has more margin?',options:[{text:'Cross-court — more distance and angle',correct:true},{text:'Down the line — shorter',correct:false},{text:'They\'re equal',correct:false},{text:'Depends on hand',correct:false}],explanation:'Cross-court: longer diagonal, lower net in middle, more forgiving angle.'},
+  { skill:'cg2',cat:'Geometry',diff:3,scenario:'Been dinking cross-court all rally. Opponent cheating to cover it.',question:'When should you go down the line?',options:[{text:'Never — too risky',correct:false},{text:'Every other shot',correct:false},{text:'When they\'re cheating cross-court and line is open',correct:true},{text:'Only on match point',correct:false}],explanation:'High risk/reward — use strategically when they overcommit cross-court.'},
+  { skill:'cg3',cat:'Geometry',diff:3,scenario:'Right side of court, hitting a forehand dink.',question:'What does an inside-out angle do?',options:[{text:'Nothing special',correct:false},{text:'Pulls opponent wide, opening court',correct:true},{text:'Only useful on serves',correct:false},{text:'Makes ball spin more',correct:false}],explanation:'Inside-out angles pull opponents off court, creating gaps for your next shot.'},
+  { skill:'fm1',cat:'Formations',diff:1,question:'Default formation for doubles at the kitchen?',options:[{text:'One up, one back',correct:false},{text:'Both same side',correct:false},{text:'Side by side, each covering half',correct:true},{text:'Stacked behind each other',correct:false}],explanation:'Side by side is default — best court coverage and clear responsibility.'},
+  { skill:'fm2',cat:'Formations',diff:3,scenario:'Right-handed on the left side. Forehand covers middle but backhand exposed to sideline.',question:'What formation solves this?',options:[{text:'Just play through it',correct:false},{text:'Stacking — position forehands in the middle',correct:true},{text:'Switch sides every point',correct:false},{text:'Stand closer to sideline',correct:false}],explanation:'Stacking lets you choose sides regardless of who served. Keep forehands middle.'},
+  { skill:'fm3',cat:'Formations',diff:2,scenario:'Partner moves left to cover a wide angle shot.',question:'What should you do?',options:[{text:'Stay where you are',correct:false},{text:'Move left with them — stay parallel',correct:true},{text:'Move right for more coverage',correct:false},{text:'Move forward',correct:false}],explanation:'Stay parallel — move as a unit. Otherwise a gap opens in the middle.'},
+  { skill:'fm4',cat:'Formations',diff:4,scenario:'In chess, "overloading" = one piece guarding two things.',question:'How does overloading apply in pickleball?',options:[{text:'Making one player cover sideline and middle',correct:true},{text:'Hitting every ball to one person',correct:false},{text:'Serving same spot',correct:false},{text:'Two forehands in middle',correct:false}],explanation:'Pull one player wide — they can\'t also cover middle. The gap opens.'},
+  { skill:'op1',cat:'Opening',diff:1,question:'Why serve deep?',options:[{text:'To get aces',correct:false},{text:'Rules require it',correct:false},{text:'Delay opponent\'s advance to kitchen',correct:true},{text:'Deep serves are easier',correct:false}],explanation:'Deep serve pins returner back, giving less time to advance.'},
+  { skill:'op2',cat:'Opening',diff:1,question:'Why is a deep return important?',options:[{text:'Looks impressive',correct:false},{text:'Pins serving team while you advance to kitchen',correct:true},{text:'Easier than short return',correct:false},{text:'Reduces spin',correct:false}],explanation:'Deep return keeps serving team back while you rush the kitchen.'},
+  { skill:'op3',cat:'Opening',diff:2,scenario:'Third shot. Return was deep but not too hard.',question:'What two options should you decide between?',options:[{text:'Lob or drive',correct:false},{text:'Drop into kitchen or drive deep',correct:true},{text:'Dink or Erne',correct:false},{text:'Pass or cross-court',correct:false}],explanation:'Third shot = key move. Drop to advance, or drive to pressure. Depends on situation.'},
+  { skill:'op4',cat:'Opening',diff:3,scenario:'Hit a decent third shot drop. Advanced to transition zone.',question:'Purpose of your fifth shot?',options:[{text:'Attack immediately',correct:false},{text:'Lob over them',correct:false},{text:'Confirm and secure net position',correct:true},{text:'Drive to baseline',correct:false}],explanation:'5th shot confirms your position at kitchen. Don\'t rush — get established first.'},
+  { skill:'in1',cat:'Initiative',diff:4,scenario:'In chess, a Zwischenzug = in-between move that disrupts opponent\'s plan.',question:'Opponent speeds up at you. Expected response: block or reset. What\'s the Zwischenzug?',options:[{text:'Block softly as expected',correct:false},{text:'Counter to their PARTNER — force a new problem',correct:true},{text:'Lob over them',correct:false},{text:'Call timeout',correct:false}],explanation:'Instead of the expected reset, redirect to the other opponent. Disrupts their follow-up plan.'},
+  { skill:'in2',cat:'Initiative',diff:2,scenario:'Opponents play best at fast, aggressive pace.',question:'How to control tempo?',options:[{text:'Match their pace',correct:false},{text:'Slow them down with soft dinks and resets',correct:true},{text:'Speed up even faster',correct:false},{text:'Only lob',correct:false}],explanation:'Give them what they don\'t want. Fast players hate patient dinking.'},
+  { skill:'in3',cat:'Initiative',diff:2,question:'Who usually has the advantage — dictating or reacting?',options:[{text:'The reactor — sees what\'s coming',correct:false},{text:'It\'s equal',correct:false},{text:'The dictator — reacting = always a step behind',correct:true},{text:'Depends on skill only',correct:false}],explanation:'Dictating = initiative. The reactor is always behind, making decisions under pressure.'},
+  { skill:'pr1',cat:'Prophylaxis',diff:3,scenario:'In chess, prophylaxis = preventing opponent\'s plan before they execute.',question:'#1 prophylactic principle in pickleball?',options:[{text:'Hit hard so they can\'t set up',correct:false},{text:'Keep ball low — deny attackable balls',correct:true},{text:'Always lob',correct:false},{text:'Stand close to net',correct:false}],explanation:'If the ball never gets above the net, they can never attack. Pure prophylaxis.'},
+  { skill:'pr2',cat:'Prophylaxis',diff:2,scenario:'Your last dink was too high. Opponent pounced.',question:'How to stop giving free speed-ups?',options:[{text:'Hit harder',correct:false},{text:'Keep every dink below net height at their contact point',correct:true},{text:'Only dink down the line',correct:false},{text:'Speed up before they can',correct:false}],explanation:'A dink that bounces above net height = free invitation to attack.'},
+  { skill:'pr3',cat:'Prophylaxis',diff:2,question:'Between shots at the kitchen, where should your paddle be?',options:[{text:'Down by your side',correct:false},{text:'Up in front of your chest, ready',correct:true},{text:'Behind your body for backswing',correct:false},{text:'Doesn\'t matter',correct:false}],explanation:'Paddle up = millisecond reaction time. Paddle down = always late. Easiest free improvement.'},
+  { skill:'pr4',cat:'Prophylaxis',diff:3,scenario:'Opponent loves sharp cross-court angles. Keeps pulling you wide.',question:'How to prophylactically remove that option?',options:[{text:'Hit everything down the line',correct:false},{text:'Position to cut off the cross-court angle',correct:true},{text:'Stand further from net',correct:false},{text:'Just move faster',correct:false}],explanation:'Shade cross-court — their favorite angle is covered, forced into second-best option.'},
+  { skill:'pa1',cat:'Reads',diff:3,scenario:'Opponent about to hit a dink. You want to predict direction.',question:'What should you watch?',options:[{text:'Their eyes',correct:false},{text:'Their paddle angle',correct:true},{text:'Their feet',correct:false},{text:'The ball only',correct:false}],explanation:'Paddle angle = trajectory. Open face = lifting. Closed = driving. Most reliable read.'},
+  { skill:'pa2',cat:'Reads',diff:3,scenario:'Opponent at baseline about to hit third shot. Drop or drive?',question:'What body cue gives it away?',options:[{text:'How loud they grunt',correct:false},{text:'Weight shift and shoulder turn — big load = drive, soft = drop',correct:true},{text:'Which foot is forward',correct:false},{text:'You can\'t tell',correct:false}],explanation:'Drive requires loading weight and rotation. Drop is softer. Read the body.'},
+  { skill:'pa3',cat:'Reads',diff:3,scenario:'Cross-court dink rally. 4 dinks in a row, last one shorter.',question:'What should you anticipate?',options:[{text:'Another dink',correct:false},{text:'A speed-up is coming',correct:true},{text:'A lob',correct:false},{text:'Switch to down the line',correct:false}],explanation:'Repeated dinks + shorter ball = speed-up setup. Paddle up, be ready.'},
+  { skill:'ad1',cat:'Adaptation',diff:2,scenario:'Early in the match — game 1.',question:'What should you prioritize?',options:[{text:'Winners to build a lead',correct:false},{text:'Scouting — observe tendencies and weaknesses',correct:true},{text:'Most aggressive style',correct:false},{text:'Being passive',correct:false}],explanation:'First 3 games = scouting. Watch backhand, pace handling, comfort zones.'},
+  { skill:'ad2',cat:'Adaptation',diff:3,scenario:'Been attacking opponent\'s backhand. They\'re now protecting it better.',question:'What should you do?',options:[{text:'Keep attacking backhand',correct:false},{text:'Switch to forehand and middle — adjust harder',correct:true},{text:'Take a break',correct:false},{text:'More lobs',correct:false}],explanation:'They adjusted? Adjust harder. Exploit the over-protection — forehand/middle now open.'},
+  { skill:'ad3',cat:'Adaptation',diff:3,scenario:'Opponent reads your dinks perfectly every time.',question:'What should you change?',options:[{text:'Hit harder',correct:false},{text:'Keep doing the same',correct:false},{text:'Vary patterns — targets, spin, timing',correct:true},{text:'Stop dinking',correct:false}],explanation:'You\'re too predictable. Vary everything. Unpredictability is a weapon.'},
+  { skill:'mt1',cat:'Mental',diff:1,scenario:'You just double-faulted on a crucial point.',question:'What before the next point?',options:[{text:'Replay the error mentally',correct:false},{text:'Reset — last point is dead, next is all',correct:true},{text:'Aggressive serve to make up',correct:false},{text:'Apologize to partner at length',correct:false}],explanation:'Reset after every point. Dwelling carries negative energy. Deep breath, focus forward.'},
+  { skill:'mt2',cat:'Mental',diff:2,scenario:'Leading 9-5 in a game to 11.',question:'How to adjust?',options:[{text:'Go for winners to close it',correct:false},{text:'Patient, high-percentage pickleball',correct:true},{text:'Try new shots with the cushion',correct:false},{text:'Speed up every ball',correct:false}],explanation:'Ahead = patient. Make them take risks to catch up. Scoreboard pressure works for you.'},
+  { skill:'mt3',cat:'Mental',diff:3,scenario:'Score 9-9. Last two points were unforced errors.',question:'Right mindset?',options:[{text:'Play it safe',correct:false},{text:'Reset and play YOUR game — don\'t tighten up',correct:true},{text:'Go aggressive to end it',correct:false},{text:'Focus on not making errors',correct:false}],explanation:'Play YOUR game. "Not making errors" = negative focus = tentative. Trust your training.'},
+];
+
+let quizState = {};
+function shuffleArray(a) { for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function pickQuestions(n) {
+  const now=Date.now();
+  const scored=questions.map((q,i)=>{
+    const h=quizHistory[q.skill+'_'+i]; let p=0;
+    if(!h) p=0; else if(!h.lastCorrect) p=1; else p=2+Math.max(0,10-(now-h.lastTime)/3600000);
+    return {q,i,p:p+Math.random()*1.5};
+  });
+  scored.sort((a,b)=>a.p-b.p);
+  return scored.slice(0,n).map(s=>({...s.q,_oi:s.i}));
+}
+
+function startQuiz() {
+  const picked=shuffleArray(pickQuestions(Math.min(12,questions.length)));
+  quizState={active:true,qs:picked,cur:0,ans:[],scores:{}};
+  document.getElementById('quizOverlay').classList.remove('hidden');
+  renderQ();
+}
+
+function renderQ() {
+  const q=quizState.qs[quizState.cur], total=quizState.qs.length, num=quizState.cur+1;
+  const opts=[...q.options.map((o,i)=>({...o,oi:i}))]; shuffleArray(opts);
+  quizState._opts=opts; quizState._ci=opts.findIndex(o=>o.correct);
+  const keys=['A','B','C','D'];
+  let dots=''; for(let i=0;i<total;i++){let c='dot';if(i<quizState.ans.length)c+=quizState.ans[i].correct?' done':' wrong';else if(i===quizState.cur)c+=' current';dots+=`<div class="${c}"></div>`;}
+  document.getElementById('quizCard').innerHTML=`
+    <div class="quiz-progress">${dots}</div>
+    <div class="quiz-cat">${esc(q.cat)} · ${num}/${total}</div>
+    ${q.scenario?`<div class="quiz-scenario">${esc(q.scenario)}</div>`:''}
+    <div class="quiz-q">${esc(q.question)}</div>
+    <div class="quiz-opts" id="qOpts">${opts.map((o,i)=>`<button class="quiz-opt" data-i="${i}"><span class="opt-key">${keys[i]}</span><span>${esc(o.text)}</span></button>`).join('')}</div>`;
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.onclick=()=>answerQ(parseInt(b.dataset.i)));
+  quizState._done=false;
+  document.onkeydown=e=>{
+    if(!quizState.active)return; if(e.key==='Escape'){closeQuiz();return;}
+    const km={a:0,b:1,c:2,d:3};
+    if(e.key.toLowerCase()in km&&!quizState._done){e.preventDefault();answerQ(km[e.key.toLowerCase()]);}
+    if((e.key==='Enter'||e.key===' ')&&quizState._done){e.preventDefault();nextQ();}
+  };
+}
+
+function answerQ(idx) {
+  if(quizState._done)return; quizState._done=true;
+  const q=quizState.qs[quizState.cur], ci=quizState._ci, ok=idx===ci;
+  quizState.ans.push({correct:ok,skill:q.skill,diff:q.diff});
+  if(!quizState.scores[q.skill])quizState.scores[q.skill]={c:0,t:0,md:0};
+  quizState.scores[q.skill].t++; if(ok){quizState.scores[q.skill].c++;quizState.scores[q.skill].md=Math.max(quizState.scores[q.skill].md,q.diff);}
+  const hk=q.skill+'_'+(q._oi||0);
+  quizHistory[hk]={lastCorrect:ok,lastTime:Date.now(),attempts:(quizHistory[hk]?.attempts||0)+1}; saveQH();
+  document.querySelectorAll('.quiz-opt').forEach((b,i)=>{if(i===ci)b.classList.add('correct');else if(i===idx&&!ok)b.classList.add('wrong');if(i!==idx&&i!==ci)b.classList.add('disabled');});
+  const dots=document.querySelectorAll('.quiz-progress .dot');
+  if(dots[quizState.cur]){dots[quizState.cur].classList.remove('current');dots[quizState.cur].classList.add(ok?'done':'wrong');}
+  document.getElementById('qOpts').insertAdjacentHTML('afterend',`<div class="quiz-explain"><strong>${ok?'✅ Correct!':'❌ Not quite.'}</strong> ${esc(q.explanation)}</div><button class="quiz-btn" id="qNext">${quizState.cur<quizState.qs.length-1?'Next Question →':'See Results →'}</button>`);
+  document.getElementById('qNext').onclick=nextQ;
+}
+
+function nextQ(){quizState.cur++;quizState.cur>=quizState.qs.length?showResults():renderQ();}
+
+function showResults() {
+  const t=quizState.ans.length,c=quizState.ans.filter(a=>a.correct).length,pct=Math.round(c/t*100);
+  quizScoreHistory.push({date:new Date().toISOString(),correct:c,total:t,pct}); if(quizScoreHistory.length>50)quizScoreHistory=quizScoreHistory.slice(-50); saveQS();
+  let grade,gc; if(pct>=90){grade='Elite';gc='#82b366';}else if(pct>=70){grade='Advanced';gc='#6c8ebf';}else if(pct>=50){grade='Competent';gc='#d6b656';}else if(pct>=30){grade='Developing';gc='#d68910';}else{grade='Beginner';gc='#b85450';}
+  let upd=[]; for(const[sid,d]of Object.entries(quizState.scores)){const nd=skillMap[sid];if(!nd)continue;const old=getRating(sid).score||0;let ns;if(d.c===d.t)ns=Math.min(5,Math.max(old,Math.ceil(d.md*1.2)));else if(d.c>0)ns=Math.max(1,Math.min(5,Math.round(d.md*0.8)));else ns=Math.max(1,old>0?old-1:1);const cur=getRating(sid);setRating(sid,ns,cur.notes||'');upd.push({label:nd.label,old,ns});}
+  let updH='';if(upd.length){updH='<div style="text-align:left;margin:16px 0"><div style="font-size:11px;font-weight:700;margin-bottom:8px">Skill Ratings Updated:</div>';upd.forEach(u=>{const stars=n=>'★'.repeat(n)+'☆'.repeat(5-n);let cls=u.ns>u.old?'su-up':u.ns<u.old?'su-down':'su-same';updH+=`<div class="skill-update-row"><span>${esc(u.label)}</span><span class="${cls}">${u.old>0?stars(u.old):'(new)'} → ${stars(u.ns)}</span></div>`;});updH+='</div>';}
+  document.getElementById('quizCard').innerHTML=`<div class="results-center"><div class="score-ring" style="border-color:${gc};background:${gc}15"><div class="sr-num" style="color:${gc}">${c}/${t}</div><div class="sr-pct" style="color:${gc}">${pct}%</div></div><h2 style="color:${gc};font-size:18px;margin-bottom:6px">${grade}</h2><p style="font-size:12px;color:#94a3b8;margin-bottom:8px">${c} of ${t} correct</p>${updH}<button class="quiz-btn" onclick="startQuiz()">🧠 Try Again</button><button class="quiz-btn secondary" onclick="closeQuiz()">Done</button></div>`;
+  document.onkeydown=null; renderOverallBar(); renderTabs(); renderContent();
+}
+
+function closeQuiz(){quizState.active=false;document.getElementById('quizOverlay').classList.add('hidden');document.onkeydown=null;}
+
+// ============ DASHBOARD ============
+function renderDash() {
+  const d=document.getElementById('dashContent');
+  const ps=pillars.map(p=>({...p,...getPillarStats(p)}));
+
+  // Radar
+  const sz=220,cx=sz/2,cy=sz/2,mr=75;
+  let svg=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">`;
+  for(let l=1;l<=5;l++){const r=mr*l/5;let pts=pillars.map((_,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2;return`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`;}).join(' ');svg+=`<polygon points="${pts}" fill="none" stroke="#2a2d42"/>`;}
+  pillars.forEach((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2;svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+mr*Math.cos(a)}" y2="${cy+mr*Math.sin(a)}" stroke="#2a2d42" stroke-width="0.5"/>`;const lx=cx+(mr+24)*Math.cos(a),ly=cy+(mr+24)*Math.sin(a);const anc=Math.abs(Math.cos(a))<0.3?'middle':Math.cos(a)>0?'start':'end';svg+=`<text x="${lx}" y="${ly+4}" text-anchor="${anc}" fill="${p.color}" font-size="9" font-weight="600" font-family="Inter,sans-serif">${p.label}</text>`;});
+  let dp=ps.map((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2,r=mr*(p.avg/5);return`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`;}).join(' ');
+  svg+=`<polygon points="${dp}" fill="rgba(108,142,191,0.2)" stroke="#6c8ebf" stroke-width="2"/>`;
+  ps.forEach((p,i)=>{const a=i/pillars.length*Math.PI*2-Math.PI/2,r=mr*(p.avg/5);svg+=`<circle cx="${cx+r*Math.cos(a)}" cy="${cy+r*Math.sin(a)}" r="4" fill="${p.color}" stroke="#1a1d2e" stroke-width="2"/>`;});
+  svg+='</svg>';
+
+  let pillarBars='';ps.forEach(p=>{const pct=p.avg>0?Math.round(p.avg/5*100):0;pillarBars+=`<div class="pillar-row"><div class="pr-label">${p.label}</div><div class="pr-bar"><div class="pr-fill" style="width:${Math.max(5,pct)}%;background:${p.color}">${p.avg.toFixed(1)}</div></div></div>`;});
+
+  // Weakest
+  let all=[];allSkillIds.forEach(id=>{const s=skillMap[id],r=getRating(id);if(!s)return;all.push({id,label:s.label,score:r.score,sub:s.sub});});
+  all.sort((a,b)=>{if(a.score===0&&b.score===0)return 0;if(a.score===0)return-1;if(b.score===0)return 1;return a.score-b.score;});
+  let weakH='';all.slice(0,6).forEach(w=>{const c=w.score===0?'#4a4d5e':w.score<=2?'#b85450':'#d6b656';weakH+=`<div class="weak-card" style="border-color:${c}"><div class="wc-name">${esc(w.label)}</div><div class="wc-stars" style="color:${c}">${w.score>0?'★'.repeat(w.score)+'☆'.repeat(5-w.score):'—'}</div></div>`;});
+
+  // History
+  let histH='';const recent=quizScoreHistory.slice(-20);
+  if(recent.length){let bars='';recent.forEach(s=>{const h=Math.max(4,s.pct/100*55);const c=s.pct>=80?'#82b366':s.pct>=60?'#d6b656':'#b85450';bars+=`<div class="hist-bar" style="height:${h}px;background:${c}" title="${s.pct}%"></div>`;});histH=`<div class="hist-bars">${bars}</div>`;}
+  else histH='<div style="text-align:center;padding:12px;color:#4a4d5e;font-size:11px">Take a quiz to see history</div>';
+
+  d.innerHTML=`
+    <div class="dash-section"><h3>📊 Skill Radar</h3><div class="radar-wrap">${svg}</div>${pillarBars}</div>
+    <div class="dash-section"><h3>🔴 Areas to Improve</h3>${weakH}</div>
+    <div class="dash-section"><h3>📈 Quiz History</h3>${histH}</div>`;
+}
+
+// ============ EVENT WIRING ============
+document.getElementById('quizFab').onclick=startQuiz;
+document.getElementById('quizClose').onclick=closeQuiz;
+document.getElementById('btnDash').onclick=()=>{document.getElementById('dashOverlay').classList.remove('hidden');renderDash();};
+document.getElementById('dashClose').onclick=()=>document.getElementById('dashOverlay').classList.add('hidden');
+document.getElementById('btnExport').onclick=()=>{const b=new Blob([JSON.stringify({ratings,quizHistory,quizScoreHistory,exportDate:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='pickleball-data.json';a.click();};
+
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(quizState.active)closeQuiz();else if(!document.getElementById('dashOverlay').classList.contains('hidden'))document.getElementById('dashOverlay').classList.add('hidden');}});
+
+// Init
+renderTabs(); renderContent(); renderOverallBar();
+</script>
 </body>
 </html>
