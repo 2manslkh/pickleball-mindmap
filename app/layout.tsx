@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -20,6 +21,11 @@ export const metadata: Metadata = {
   title: 'Pickleball Strategy — Grandmaster Edition',
   description:
     'A chess-grandmaster framework for pickleball strategy. Rate your skills across five pillars and quiz yourself.',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Pickleball GM',
+  },
 };
 
 export const viewport: Viewport = {
@@ -33,7 +39,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorkerRegister />
+      </body>
     </html>
   );
 }
