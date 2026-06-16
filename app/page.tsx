@@ -9,6 +9,8 @@ import Header from '@/components/Header';
 import PillarView from '@/components/PillarView';
 import QuizOverlay from '@/components/QuizOverlay';
 import Dashboard from '@/components/Dashboard';
+import SkillTree from '@/components/tree/SkillTree';
+import SkillDetail from '@/components/SkillDetail';
 
 export default function Page() {
   const [ratings, setRatings] = useLocalStorageState<Ratings>('pickleball-gm-ratings', {});
@@ -22,6 +24,8 @@ export default function Page() {
   );
 
   const [activePillar, setActivePillar] = useState('score');
+  const [view, setView] = useState<'list' | 'tree'>('list');
+  const [detailSkill, setDetailSkill] = useState<string | null>(null);
   const [expandedSkill, setExpandedSkill] = useState<string | null>(null);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [quizOpen, setQuizOpen] = useState(false);
@@ -30,12 +34,12 @@ export default function Page() {
 
   // Lock body scroll while an overlay is open.
   useEffect(() => {
-    const lock = quizOpen || dashOpen;
+    const lock = quizOpen || dashOpen || detailSkill != null;
     document.body.style.overflow = lock ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [quizOpen, dashOpen]);
+  }, [quizOpen, dashOpen, detailSkill]);
 
   const setRating = useCallback(
     (id: string, score: number, notes: string) => {
@@ -190,25 +194,32 @@ export default function Page() {
         ratings={ratings}
         overallPct={overallPct}
         activePillar={activePillar}
+        view={view}
+        onSetView={setView}
         onSelectPillar={setActivePillar}
         onDash={() => setDashOpen(true)}
         onImport={triggerImport}
         onExport={exportData}
       />
 
-      <div className="content">
-        <PillarView
-          pillar={pillar}
-          ratings={ratings}
-          expandedSkill={expandedSkill}
-          collapsedGroups={collapsedGroups}
-          onToggleSkill={toggleSkill}
-          onToggleGroup={toggleGroup}
-          onRate={rateSkill}
-          onClear={clearSkill}
-          onNotes={setNotes}
-        />
-      </div>
+      {view === 'tree' ? (
+        <SkillTree ratings={ratings} onSelectSkill={setDetailSkill} />
+      ) : (
+        <div className="content">
+          <PillarView
+            pillar={pillar}
+            ratings={ratings}
+            expandedSkill={expandedSkill}
+            collapsedGroups={collapsedGroups}
+            onToggleSkill={toggleSkill}
+            onToggleGroup={toggleGroup}
+            onRate={rateSkill}
+            onClear={clearSkill}
+            onNotes={setNotes}
+            onOpenDetail={setDetailSkill}
+          />
+        </div>
+      )}
 
       <div className="bottom-bar">
         <button className="quiz-fab" onClick={() => setQuizOpen(true)}>
@@ -242,6 +253,15 @@ export default function Page() {
         onExport={exportData}
         onImport={triggerImport}
         onReset={resetAll}
+      />
+
+      <SkillDetail
+        skillId={detailSkill}
+        ratings={ratings}
+        onClose={() => setDetailSkill(null)}
+        onRate={rateSkill}
+        onClear={clearSkill}
+        onNotes={setNotes}
       />
     </>
   );

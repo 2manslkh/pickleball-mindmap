@@ -3,10 +3,14 @@
 import { pillars } from '@/lib/data';
 import { getPillarStats, Ratings } from '@/lib/stats';
 
+type View = 'list' | 'tree';
+
 interface Props {
   ratings: Ratings;
   overallPct: number;
   activePillar: string;
+  view: View;
+  onSetView: (v: View) => void;
   onSelectPillar: (id: string) => void;
   onDash: () => void;
   onImport: () => void;
@@ -17,6 +21,8 @@ export default function Header({
   ratings,
   overallPct,
   activePillar,
+  view,
+  onSetView,
   onSelectPillar,
   onDash,
   onImport,
@@ -27,6 +33,22 @@ export default function Header({
       <div className="header-top">
         <h1>🏓 Pickleball Strategy</h1>
         <div className="header-actions">
+          <div className="view-toggle" role="tablist" aria-label="View">
+            <button
+              className={view === 'list' ? 'active' : ''}
+              onClick={() => onSetView('list')}
+              title="List view"
+            >
+              ☰
+            </button>
+            <button
+              className={view === 'tree' ? 'active' : ''}
+              onClick={() => onSetView('tree')}
+              title="Skill tree view"
+            >
+              🌳
+            </button>
+          </div>
           <button title="Dashboard" onClick={onDash}>
             📈
           </button>
@@ -41,7 +63,7 @@ export default function Header({
       <div className="overall-bar">
         <div className="overall-bar-fill" style={{ width: `${overallPct}%` }} />
       </div>
-      <div className="pillar-tabs">
+      <div className="pillar-tabs" style={view === 'tree' ? { opacity: 0.45, pointerEvents: 'none' } : undefined}>
         {pillars.map((p) => {
           const stats = getPillarStats(p, ratings);
           return (

@@ -14,6 +14,7 @@ interface Props {
   onRate: (id: string, value: number) => void;
   onClear: (id: string) => void;
   onNotes: (id: string, text: string) => void;
+  onOpenDetail: (id: string) => void;
 }
 
 export default function PillarView({
@@ -26,6 +27,7 @@ export default function PillarView({
   onRate,
   onClear,
   onNotes,
+  onOpenDetail,
 }: Props) {
   const stats = getPillarStats(pillar, ratings);
 
@@ -80,6 +82,7 @@ export default function PillarView({
                   onRate={(value) => onRate(s.id, value)}
                   onClear={() => onClear(s.id)}
                   onNotes={(text) => onNotes(s.id, text)}
+                  onOpenDetail={() => onOpenDetail(s.id)}
                 />
               ))}
           </div>

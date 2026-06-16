@@ -10,6 +10,7 @@ interface Props {
   onRate: (value: number) => void;
   onClear: () => void;
   onNotes: (text: string) => void;
+  onOpenDetail: () => void;
 }
 
 export default function SkillCard({
@@ -20,6 +21,7 @@ export default function SkillCard({
   onRate,
   onClear,
   onNotes,
+  onOpenDetail,
 }: Props) {
   return (
     <div className={`skill-card ${expanded ? 'expanded' : ''}`} onClick={onToggle}>
@@ -86,6 +88,9 @@ export default function SkillCard({
               onChange={(e) => onNotes(e.target.value)}
             />
           </div>
+          <button className="sc-learn-btn" onClick={onOpenDetail}>
+            📖 Learn &amp; 3D drill →
+          </button>
         </div>
       )}
     </div>

@@ -272,6 +272,42 @@
     .gm-principle .gm-title { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.14em; }
     .gm-principle .gm-body { font-size: 13px; color: var(--ink80); line-height: 1.55; }
 
+    /* View toggle (List / Tree) in header */
+    .view-toggle { display: inline-flex; gap: 2px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 2px; margin-right: 2px; }
+    .view-toggle button { width: 30px; height: 30px; border: none; background: transparent; border-radius: 6px; font-size: 14px; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+    .view-toggle button.active { background: var(--bg); color: var(--ink); box-shadow: 0 1px 2px rgba(15,23,42,0.08); }
+
+    /* Skill tree */
+    .tree-wrap { position: relative; width: 100%; height: calc(100vh - 134px); overflow: hidden; background:
+      radial-gradient(circle at 1px 1px, rgba(15,23,42,0.05) 1px, transparent 0) 0 0 / 22px 22px, var(--bg-soft); touch-action: none; }
+    .tree-svg { width: 100%; height: 100%; display: block; cursor: grab; }
+    .tree-svg:active { cursor: grabbing; }
+    .tree-controls { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .tree-controls button { width: 34px; height: 34px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 16px; cursor: pointer; box-shadow: 0 1px 3px rgba(15,23,42,0.08); display: flex; align-items: center; justify-content: center; }
+    .tree-controls button:active { background: var(--line2); }
+    .tree-legend { position: absolute; left: 12px; bottom: 90px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; max-width: calc(100% - 24px); background: rgba(255,255,255,0.92); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 7px 10px; backdrop-filter: blur(6px); box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
+    .tree-legend .tl-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); width: 100%; }
+    .tree-legend .tl-item { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: var(--body); }
+    .tree-legend .tl-item i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .tree-hint { position: absolute; left: 12px; right: 12px; top: 10px; text-align: center; font-size: 10px; color: var(--muted); pointer-events: none; }
+
+    /* "Learn & 3D" button on expanded list cards */
+    .sc-learn-btn { margin-top: 12px; width: 100%; padding: 10px; border-radius: var(--r-sm); border: 1px solid rgba(16,185,129,0.4); background: var(--green-bg); color: var(--green-dark); font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; transition: transform var(--dur-snap) var(--ease-out); }
+    .sc-learn-btn:active { transform: scale(0.99); }
+
+    /* Skill detail overlay content */
+    .sd-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
+    .sd-title { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; }
+    .sd-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .sd-section { margin-top: 18px; }
+    .sd-h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green-dark); margin-bottom: 8px; }
+    .sd-explain { font-size: 13.5px; line-height: 1.6; color: var(--body); }
+    .sd-anim-note { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--ink80); background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px 11px; }
+    .sd-videos { display: flex; flex-direction: column; gap: 8px; }
+    .sd-video-link { display: block; text-decoration: none; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-date); padding: 11px 13px; font-size: 13px; font-weight: 600; color: var(--ink); transition: border-color var(--dur-snap) var(--ease-out); }
+    .sd-video-link:active { border-color: var(--green); }
+    .court3d-loading { width: 100%; height: 280px; border-radius: var(--r-logo); background: #1B5870; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
     }
