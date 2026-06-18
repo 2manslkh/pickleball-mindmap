@@ -31,7 +31,20 @@ export default function Header({
   return (
     <div className="header">
       <div className="header-top">
-        <h1>🏓 Pickleball Strategy</h1>
+        <h1>
+          🏓 Pickleball Strategy
+          {process.env.NEXT_PUBLIC_APP_VERSION && (
+            <a
+              className="app-version"
+              href="https://github.com/2manslkh/pickleball-mindmap/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Release notes"
+            >
+              v{process.env.NEXT_PUBLIC_APP_VERSION}
+            </a>
+          )}
+        </h1>
         <div className="header-actions">
           <div className="view-toggle" role="tablist" aria-label="View">
             <button

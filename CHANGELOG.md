@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-06-18
+
+### Added
+
+- **Physics-based 3D shot trajectories**: each drill now solves a gravity parabola
+  whose curvature guarantees the ball clears the net (at its real sagging height for
+  the crossing point) by a shot-appropriate margin, then bounces. Shot type and
+  spin (topspin dips, slice floats) drive the flight — no hand-tuned arc heights.
+- **Animated player figures**: stylized ~1.75 m figures (body, head, paddle). The
+  striker stands at the contact point and swings through the ball; the receiver
+  shifts to the target and split-steps.
+- `pickleball-court-animations` authoring skill and a headless `npm run verify:court`
+  net-clearance test that checks every shot spec.
+- **App version badge** in the header, sourced from `package.json` (links to releases).
+
+### Fixed
+
+- Ball flight passing **through the net** on low/flat shots (dinks, drives, smashes,
+  speed-ups) — the old single symmetric parabola peaked off-net and below net height.
+- Player models that never moved during a drill.
+
+### Changed
+
+- Court now uses **official USA Pickleball dimensions** with a net that sags from
+  36 in at the posts to 34 in at center; net clearance is checked at the real height.
+- Ball trajectory physics extracted to `lib/court-physics.ts` (pure, render-free,
+  shared by the renderer and the verifier).
+
 ## [2.0.0] - 2026-06-15
 
 ### Changed
@@ -35,5 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per-skill self-rating with notes, a spaced-repetition quiz, and a dashboard
   (skill radar, weak areas, quiz history). Stored locally via `localStorage`.
 
-[Unreleased]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/2manslkh/pickleball-mindmap/releases/tag/v2.0.0
