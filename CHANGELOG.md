@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-06-20
+
+### Changed
+
+- **Removed all chess framing.** Title "Grandmaster Edition" → "Pickleball Strategy",
+  "chess-grandmaster framework" → "a complete strategy framework", dropped the
+  ♟️ "Chess concept" badge and pawn iconography, and renamed chess-derived concepts
+  to plain pickleball language ("Zwischenzug" → "In-between shot", "Prophylaxis" →
+  "Prevention", pillar taglines reworded). Internal `pickleball-gm-*` localStorage
+  keys are intentionally kept to preserve existing users' saved progress.
+
+### Fixed
+
+- **Educational content corrections** (reviewed against the USA Pickleball rulebook):
+  - Erne legality stated precisely — both feet established outside the non-volley
+    zone and no kitchen contact during the volley.
+  - Overhead error corrected to over-hitting long (was "hitting into the net").
+  - "Change pace & spin" drill now visualizes a slice dink instead of a baseline
+    drive, matching the soft-game lesson.
+  - Tightened the dink-margin quiz wording.
+- `verify:court` npm script now runs (uses `npx tsx`).
+
 ## [2.1.0] - 2026-06-18
 
 ### Added
@@ -63,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per-skill self-rating with notes, a spaced-repetition quiz, and a dashboard
   (skill radar, weak areas, quiz history). Stored locally via `localStorage`.
 
-[Unreleased]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/2manslkh/pickleball-mindmap/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/2manslkh/pickleball-mindmap/releases/tag/v2.0.0

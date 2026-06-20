@@ -1,14 +1,14 @@
 {
   "name": "pickleball-mindmap",
   "version": "2.1.0",
-  "description": "Pickleball strategy mindmap — chess-grandmaster framework for pickleball, with self-rating and quizzes",
+  "description": "Pickleball strategy mindmap — a complete strategy framework for pickleball, with self-rating and quizzes",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "verify:court": "tsx scripts/verify-trajectories.ts",
+    "verify:court": "npx tsx scripts/verify-trajectories.ts",
     "release:patch": "npm version patch -m \"chore(release): %s\" && git push --follow-tags",
     "release:minor": "npm version minor -m \"chore(release): %s\" && git push --follow-tags",
     "release:major": "npm version major -m \"chore(release): %s\" && git push --follow-tags"

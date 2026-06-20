@@ -5,7 +5,6 @@ export interface Skill {
   id: string;
   label: string;
   sub: string;
-  chess?: boolean;
 }
 
 export interface SkillGroup {
@@ -19,7 +18,7 @@ export interface Pillar {
   emoji: string;
   color: string;
   bg: string;
-  chess: string;
+  tagline: string;
   groups: SkillGroup[];
 }
 
@@ -45,7 +44,7 @@ export interface Rating {
 }
 
 export const pillars: Pillar[] = [
-  { id: 'score', label: 'Score Points', emoji: '⚔️', color: '#10B981', bg: '#ECFDF5', chess: 'Attack with purpose',
+  { id: 'score', label: 'Score Points', emoji: '⚔️', color: '#10B981', bg: '#ECFDF5', tagline: 'Attack with purpose',
     groups: [
       { label: 'Force Errors', skills: [
         { id: 'diff_balls', label: 'Give difficult balls', sub: 'Calibrate to their skill level' },
@@ -62,13 +61,13 @@ export const pillars: Pillar[] = [
       { label: 'Attacking', skills: [
         { id: 'high_balls', label: 'Attack high balls at kitchen', sub: 'Lowest variance attack' },
         { id: 'at1', label: 'Speed-up at body/feet', sub: 'Least reaction time' },
-        { id: 'at2', label: 'Erne', sub: 'Jump around the kitchen' },
+        { id: 'at2', label: 'Erne', sub: 'Volley beside the net, feet outside the kitchen' },
         { id: 'at3', label: 'Overhead smash', sub: 'Punish short lobs' },
         { id: 'at4', label: 'Roll volley', sub: 'Topspin put-away with control' },
       ]},
     ]
   },
-  { id: 'nolose', label: "Don't Lose", emoji: '🛡️', color: '#10B981', bg: '#ECFDF5', chess: 'Solid defense wins matches',
+  { id: 'nolose', label: "Don't Lose", emoji: '🛡️', color: '#10B981', bg: '#ECFDF5', tagline: 'Solid defense wins matches',
     groups: [
       { label: 'Avoid Errors', skills: [
         { id: 'drill', label: 'Drill technique', sub: 'Reps build consistency' },
@@ -93,7 +92,7 @@ export const pillars: Pillar[] = [
       ]},
     ]
   },
-  { id: 'position', label: 'Positional', emoji: '♟️', color: '#10B981', bg: '#ECFDF5', chess: 'Control key squares',
+  { id: 'position', label: 'Positional', emoji: '📍', color: '#10B981', bg: '#ECFDF5', tagline: 'Control the key positions',
     groups: [
       { label: 'Kitchen Line = Center Control', skills: [
         { id: 'kc1', label: 'Both at kitchen ASAP', sub: 'The team that gets there first wins' },
@@ -110,11 +109,11 @@ export const pillars: Pillar[] = [
         { id: 'fm1', label: 'Side by side', sub: 'Default, cover court' },
         { id: 'fm2', label: 'Stacking', sub: 'Keep forehands in middle' },
         { id: 'fm3', label: 'Stay parallel', sub: 'Move as a unit, no gaps' },
-        { id: 'fm4', label: 'Overloading', sub: 'One piece can\'t guard both sides', chess: true },
+        { id: 'fm4', label: 'Overloading', sub: 'One player can\'t guard both sides' },
       ]},
     ]
   },
-  { id: 'tempo', label: 'Tempo', emoji: '⏱️', color: '#10B981', bg: '#ECFDF5', chess: 'Who dictates play?',
+  { id: 'tempo', label: 'Tempo', emoji: '⏱️', color: '#10B981', bg: '#ECFDF5', tagline: 'Who dictates play?',
     groups: [
       { label: 'Opening Theory', skills: [
         { id: 'op1', label: 'Serve deep', sub: 'Delay their advance' },
@@ -123,11 +122,11 @@ export const pillars: Pillar[] = [
         { id: 'op4', label: '5th shot = confirm position', sub: 'Secure the net' },
       ]},
       { label: 'Keep Initiative', skills: [
-        { id: 'in1', label: 'Zwischenzug', sub: 'Unexpected in-between shot', chess: true },
+        { id: 'in1', label: 'In-between shot', sub: 'Unexpected counter that disrupts their plan' },
         { id: 'in2', label: 'Control the pace', sub: 'Give them what they don\'t want' },
         { id: 'in3', label: 'Dictate rallies', sub: 'Reacting = losing' },
       ]},
-      { label: 'Prophylaxis', skills: [
+      { label: 'Prevention', skills: [
         { id: 'pr1', label: 'Keep ball low', sub: 'Deny attackable balls' },
         { id: 'pr2', label: 'No free speed-up balls', sub: 'Every dink below net height' },
         { id: 'pr3', label: 'Paddle up, ready', sub: 'Preparation = defense' },
@@ -135,7 +134,7 @@ export const pillars: Pillar[] = [
       ]},
     ]
   },
-  { id: 'psych', label: 'Psychology', emoji: '🧠', color: '#10B981', bg: '#ECFDF5', chess: 'Know your opponent',
+  { id: 'psych', label: 'Psychology', emoji: '🧠', color: '#10B981', bg: '#ECFDF5', tagline: 'Know your opponent',
     groups: [
       { label: 'Pattern Recognition', skills: [
         { id: 'pa1', label: 'Read paddle angle', sub: 'Predicts ball direction' },
@@ -173,7 +172,7 @@ export const questions: Question[] = [
   { skill:'dr1',cat:'Drilling',diff:2,question:'When drilling dinks, what should you focus on most?',options:[{text:'Power',correct:false},{text:'Placement and consistency',correct:true},{text:'Maximum spin',correct:false},{text:'Speed',correct:false}],explanation:'Placement and consistency win kitchen battles. Accuracy is the foundation.'},
   { skill:'dr2',cat:'Drilling',diff:2,question:'Most important thing to practice with third shot drills?',options:[{text:'Always dropping',correct:false},{text:'Hitting winners',correct:false},{text:'Both drop and drive, and knowing when to use each',correct:true},{text:'Only from one side',correct:false}],explanation:'You need both in your toolkit. Drill both and develop judgment for when each is appropriate.'},
   { skill:'dr3',cat:'Drilling',diff:3,scenario:'Your biggest weakness: you pop the ball up when opponents speed up at you.',question:'What drill should you prioritize?',options:[{text:'Serve practice',correct:false},{text:'Overhead smashes',correct:false},{text:'Reset drills — blocking fast balls softly',correct:true},{text:'Dink-only rallies',correct:false}],explanation:'Resets are the defensive foundation. Trains your hands to absorb speed.'},
-  { skill:'mg1',cat:'Margin',diff:2,scenario:'Your last two dinks hit the net.',question:'How much clearance for dinks?',options:[{text:'1cm over — as low as possible',correct:false},{text:'5-15cm (2-6 inches)',correct:true},{text:'60cm (2 feet)',correct:false},{text:'Doesn\'t matter if it lands in kitchen',correct:false}],explanation:'5-15cm is the sweet spot. Too low = net. Too high = attackable. 60cm is a kill ball.'},
+  { skill:'mg1',cat:'Margin',diff:2,scenario:'Your last two dinks hit the net.',question:'How much clearance for dinks?',options:[{text:'1cm over — as low as possible',correct:false},{text:'5-15cm (2-6 inches)',correct:true},{text:'60cm (2 feet)',correct:false},{text:'Doesn\'t matter if it lands in kitchen',correct:false}],explanation:'5-15cm is the sweet spot. Too low = net. Too high = attackable — a dink 2 feet over the net is a free put-away for them.'},
   { skill:'mg2',cat:'Margin',diff:2,scenario:'Hitting a forehand drive from mid-court.',question:'How much net clearance for drives?',options:[{text:'As low as possible while clearing',correct:true},{text:'30cm above',correct:false},{text:'60cm above',correct:false},{text:'Hit the net tape',correct:false}],explanation:'Low, flat drives give opponents less time and are harder to return.'},
   { skill:'mg3',cat:'Margin',diff:1,scenario:'Last three serves went long.',question:'How much inside the lines should you aim?',options:[{text:'Right on the line',correct:false},{text:'About 60cm (2ft) inside',correct:true},{text:'Very center of the box',correct:false},{text:'Doesn\'t matter',correct:false}],explanation:'60cm margin lets you be deep without sailing out. Smart players build in margins.'},
   { skill:'ss1',cat:'Shot Selection',diff:2,scenario:'At the kitchen. No obvious opening, both opponents positioned well.',question:'What shot should you hit?',options:[{text:'Low % winner down the line',correct:false},{text:'Speed up at closest player',correct:false},{text:'High % shot — keep ball in play, wait for opening',correct:true},{text:'Lob deep',correct:false}],explanation:'Without a clear put-away, play high percentage. Patience wins more than forcing.'},
@@ -192,18 +191,18 @@ export const questions: Question[] = [
   { skill:'fm1',cat:'Formations',diff:1,question:'Default formation for doubles at the kitchen?',options:[{text:'One up, one back',correct:false},{text:'Both same side',correct:false},{text:'Side by side, each covering half',correct:true},{text:'Stacked behind each other',correct:false}],explanation:'Side by side is default — best court coverage and clear responsibility.'},
   { skill:'fm2',cat:'Formations',diff:3,scenario:'Right-handed on the left side. Forehand covers middle but backhand exposed to sideline.',question:'What formation solves this?',options:[{text:'Just play through it',correct:false},{text:'Stacking — position forehands in the middle',correct:true},{text:'Switch sides every point',correct:false},{text:'Stand closer to sideline',correct:false}],explanation:'Stacking lets you choose sides regardless of who served. Keep forehands middle.'},
   { skill:'fm3',cat:'Formations',diff:2,scenario:'Partner moves left to cover a wide angle shot.',question:'What should you do?',options:[{text:'Stay where you are',correct:false},{text:'Move left with them — stay parallel',correct:true},{text:'Move right for more coverage',correct:false},{text:'Move forward',correct:false}],explanation:'Stay parallel — move as a unit. Otherwise a gap opens in the middle.'},
-  { skill:'fm4',cat:'Formations',diff:4,scenario:'In chess, "overloading" = one piece guarding two things.',question:'How does overloading apply in pickleball?',options:[{text:'Making one player cover sideline and middle',correct:true},{text:'Hitting every ball to one person',correct:false},{text:'Serving same spot',correct:false},{text:'Two forehands in middle',correct:false}],explanation:'Pull one player wide — they can\'t also cover middle. The gap opens.'},
+  { skill:'fm4',cat:'Formations',diff:4,scenario:'Overloading means forcing one player to guard two things at once.',question:'How does overloading apply in pickleball?',options:[{text:'Making one player cover sideline and middle',correct:true},{text:'Hitting every ball to one person',correct:false},{text:'Serving same spot',correct:false},{text:'Two forehands in middle',correct:false}],explanation:'Pull one player wide — they can\'t also cover middle. The gap opens.'},
   { skill:'op1',cat:'Opening',diff:1,question:'Why serve deep?',options:[{text:'To get aces',correct:false},{text:'Rules require it',correct:false},{text:'Delay opponent\'s advance to kitchen',correct:true},{text:'Deep serves are easier',correct:false}],explanation:'Deep serve pins returner back, giving less time to advance.'},
   { skill:'op2',cat:'Opening',diff:1,question:'Why is a deep return important?',options:[{text:'Looks impressive',correct:false},{text:'Pins serving team while you advance to kitchen',correct:true},{text:'Easier than short return',correct:false},{text:'Reduces spin',correct:false}],explanation:'Deep return keeps serving team back while you rush the kitchen.'},
   { skill:'op3',cat:'Opening',diff:2,scenario:'Third shot. Return was deep but not too hard.',question:'What two options should you decide between?',options:[{text:'Lob or drive',correct:false},{text:'Drop into kitchen or drive deep',correct:true},{text:'Dink or Erne',correct:false},{text:'Pass or cross-court',correct:false}],explanation:'Third shot = key move. Drop to advance, or drive to pressure. Depends on situation.'},
   { skill:'op4',cat:'Opening',diff:3,scenario:'Hit a decent third shot drop. Advanced to transition zone.',question:'Purpose of your fifth shot?',options:[{text:'Attack immediately',correct:false},{text:'Lob over them',correct:false},{text:'Confirm and secure net position',correct:true},{text:'Drive to baseline',correct:false}],explanation:'5th shot confirms your position at kitchen. Don\'t rush — get established first.'},
-  { skill:'in1',cat:'Initiative',diff:4,scenario:'In chess, a Zwischenzug = in-between move that disrupts opponent\'s plan.',question:'Opponent speeds up at you. Expected response: block or reset. What\'s the Zwischenzug?',options:[{text:'Block softly as expected',correct:false},{text:'Counter to their PARTNER — force a new problem',correct:true},{text:'Lob over them',correct:false},{text:'Call timeout',correct:false}],explanation:'Instead of the expected reset, redirect to the other opponent. Disrupts their follow-up plan.'},
+  { skill:'in1',cat:'Initiative',diff:4,scenario:'An in-between shot is an unexpected reply that disrupts the opponent\'s plan.',question:'Opponent speeds up at you. Expected response: block or reset. What\'s the unexpected in-between shot?',options:[{text:'Block softly as expected',correct:false},{text:'Counter to their PARTNER — force a new problem',correct:true},{text:'Lob over them',correct:false},{text:'Call timeout',correct:false}],explanation:'Instead of the expected reset, redirect to the other opponent. Disrupts their follow-up plan.'},
   { skill:'in2',cat:'Initiative',diff:2,scenario:'Opponents play best at fast, aggressive pace.',question:'How to control tempo?',options:[{text:'Match their pace',correct:false},{text:'Slow them down with soft dinks and resets',correct:true},{text:'Speed up even faster',correct:false},{text:'Only lob',correct:false}],explanation:'Give them what they don\'t want. Fast players hate patient dinking.'},
   { skill:'in3',cat:'Initiative',diff:2,question:'Who usually has the advantage — dictating or reacting?',options:[{text:'The reactor — sees what\'s coming',correct:false},{text:'It\'s equal',correct:false},{text:'The dictator — reacting = always a step behind',correct:true},{text:'Depends on skill only',correct:false}],explanation:'Dictating = initiative. The reactor is always behind, making decisions under pressure.'},
-  { skill:'pr1',cat:'Prophylaxis',diff:3,scenario:'In chess, prophylaxis = preventing opponent\'s plan before they execute.',question:'#1 prophylactic principle in pickleball?',options:[{text:'Hit hard so they can\'t set up',correct:false},{text:'Keep ball low — deny attackable balls',correct:true},{text:'Always lob',correct:false},{text:'Stand close to net',correct:false}],explanation:'If the ball never gets above the net, they can never attack. Pure prophylaxis.'},
-  { skill:'pr2',cat:'Prophylaxis',diff:2,scenario:'Your last dink was too high. Opponent pounced.',question:'How to stop giving free speed-ups?',options:[{text:'Hit harder',correct:false},{text:'Keep every dink below net height at their contact point',correct:true},{text:'Only dink down the line',correct:false},{text:'Speed up before they can',correct:false}],explanation:'A dink that bounces above net height = free invitation to attack.'},
-  { skill:'pr3',cat:'Prophylaxis',diff:2,question:'Between shots at the kitchen, where should your paddle be?',options:[{text:'Down by your side',correct:false},{text:'Up in front of your chest, ready',correct:true},{text:'Behind your body for backswing',correct:false},{text:'Doesn\'t matter',correct:false}],explanation:'Paddle up = millisecond reaction time. Paddle down = always late. Easiest free improvement.'},
-  { skill:'pr4',cat:'Prophylaxis',diff:3,scenario:'Opponent loves sharp cross-court angles. Keeps pulling you wide.',question:'How to prophylactically remove that option?',options:[{text:'Hit everything down the line',correct:false},{text:'Position to cut off the cross-court angle',correct:true},{text:'Stand further from net',correct:false},{text:'Just move faster',correct:false}],explanation:'Shade cross-court — their favorite angle is covered, forced into second-best option.'},
+  { skill:'pr1',cat:'Prevention',diff:3,scenario:'Prevention means stopping the opponent\'s plan before they can execute it.',question:'#1 prevention principle in pickleball?',options:[{text:'Hit hard so they can\'t set up',correct:false},{text:'Keep ball low — deny attackable balls',correct:true},{text:'Always lob',correct:false},{text:'Stand close to net',correct:false}],explanation:'If the ball never gets above the net, they can never attack. Pure prevention.'},
+  { skill:'pr2',cat:'Prevention',diff:2,scenario:'Your last dink was too high. Opponent pounced.',question:'How to stop giving free speed-ups?',options:[{text:'Hit harder',correct:false},{text:'Keep every dink below net height at their contact point',correct:true},{text:'Only dink down the line',correct:false},{text:'Speed up before they can',correct:false}],explanation:'A dink that bounces above net height = free invitation to attack.'},
+  { skill:'pr3',cat:'Prevention',diff:2,question:'Between shots at the kitchen, where should your paddle be?',options:[{text:'Down by your side',correct:false},{text:'Up in front of your chest, ready',correct:true},{text:'Behind your body for backswing',correct:false},{text:'Doesn\'t matter',correct:false}],explanation:'Paddle up = millisecond reaction time. Paddle down = always late. Easiest free improvement.'},
+  { skill:'pr4',cat:'Prevention',diff:3,scenario:'Opponent loves sharp cross-court angles. Keeps pulling you wide.',question:'How to remove that option before they can use it?',options:[{text:'Hit everything down the line',correct:false},{text:'Position to cut off the cross-court angle',correct:true},{text:'Stand further from net',correct:false},{text:'Just move faster',correct:false}],explanation:'Shade cross-court — their favorite angle is covered, forced into second-best option.'},
   { skill:'pa1',cat:'Reads',diff:3,scenario:'Opponent about to hit a dink. You want to predict direction.',question:'What should you watch?',options:[{text:'Their eyes',correct:false},{text:'Their paddle angle',correct:true},{text:'Their feet',correct:false},{text:'The ball only',correct:false}],explanation:'Paddle angle = trajectory. Open face = lifting. Closed = driving. Most reliable read.'},
   { skill:'pa2',cat:'Reads',diff:3,scenario:'Opponent at baseline about to hit third shot. Drop or drive?',question:'What body cue gives it away?',options:[{text:'How loud they grunt',correct:false},{text:'Weight shift and shoulder turn — big load = drive, soft = drop',correct:true},{text:'Which foot is forward',correct:false},{text:'You can\'t tell',correct:false}],explanation:'Drive requires loading weight and rotation. Drop is softer. Read the body.'},
   { skill:'pa3',cat:'Reads',diff:3,scenario:'Cross-court dink rally. 4 dinks in a row, last one shorter.',question:'What should you anticipate?',options:[{text:'Another dink',correct:false},{text:'A speed-up is coming',correct:true},{text:'A lob',correct:false},{text:'Switch to down the line',correct:false}],explanation:'Repeated dinks + shorter ball = speed-up setup. Paddle up, be ready.'},

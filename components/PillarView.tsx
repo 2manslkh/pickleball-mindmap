@@ -38,7 +38,7 @@ export default function PillarView({
         <h2>
           {pillar.emoji} {pillar.label}
         </h2>
-        <div className="chess-sub">♟️ {pillar.chess}</div>
+        <div className="pillar-tagline">{pillar.tagline}</div>
         <div className="hero-stats">
           <div className="hero-stat">
             <div className="hs-val">{stats.avg > 0 ? stats.avg.toFixed(1) : '—'}</div>

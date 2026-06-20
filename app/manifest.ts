@@ -2,10 +2,10 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Pickleball Strategy — Grandmaster Edition',
-    short_name: 'Pickleball GM',
+    name: 'Pickleball Strategy',
+    short_name: 'Pickleball',
     description:
-      'A chess-grandmaster framework for pickleball strategy. Rate your skills and quiz yourself.',
+      'A complete strategy framework for pickleball. Rate your skills and quiz yourself.',
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait',

@@ -1,6 +1,6 @@
-# 🏓 Pickleball Strategy — Grandmaster Edition
+# 🏓 Pickleball Strategy
 
-A chess-grandmaster framework for pickleball strategy. Rate your skills across five
+A complete strategy framework for pickleball. Rate your skills across five
 strategic pillars, track progress, and quiz yourself. All data is stored locally in
 your browser (localStorage) — no account, no backend.
 

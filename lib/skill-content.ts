@@ -107,7 +107,7 @@ export const skillContent: Record<string, SkillContent> = {
     explanation:
       'When an opponent settles into a rhythm, change the picture: mix in slower dinks, heavier topspin, slice that stays low, and the occasional change of pace. Disrupting their timing is often what produces the loose ball you have been waiting for.',
     youtube: yt('pickleball change pace and spin'),
-    anim: { template: 'drive', from: [1.0, 3.0], to: [-1.4, -3.0], spin: 'top' },
+    anim: { template: 'dink', from: [1.2, 2.4], to: [-1.9, -1.9], spin: 'slice' },
   },
   w6: {
     explanation:
@@ -129,13 +129,13 @@ export const skillContent: Record<string, SkillContent> = {
   },
   at2: {
     explanation:
-      'The Erne: anticipating a predictable cross-court dink, you move around or jump across the kitchen and volley the ball out of the air from beside the net post — legally, because your feet land outside the non-volley zone. It steals time and angle from a comfortable dinker.',
+      'The Erne: anticipating a predictable cross-court dink, you move around the outside of the kitchen (or jump across it) and volley the ball out of the air beside the net — legally, as long as both feet are established outside the non-volley zone and you never touch the kitchen during the volley. It steals time and angle from a comfortable dinker.',
     youtube: yt('pickleball Erne tutorial how to'),
     anim: { template: 'erne', from: [-1.6, -2.4], to: [2.9, 2.0] },
   },
   at3: {
     explanation:
-      'A short lob is a gift. Track the ball, get under and behind it, and drive the overhead down at an angle into open court or at a body. Most overhead errors come from poor footwork and hitting flat into the net tape — stay balanced and aim a few feet inside the lines.',
+      'A short lob is a gift. Track the ball, get under and behind it, and drive the overhead down at an angle into open court or at a body. Most overhead errors come from poor footwork and over-hitting long — stay balanced and aim a few feet inside the lines.',
     youtube: yt('pickleball overhead smash technique'),
     anim: { template: 'smash', from: [0, 2.0], to: [-1.5, -3.0], spin: 'flat' },
   },
@@ -229,7 +229,7 @@ export const skillContent: Record<string, SkillContent> = {
   // ===== POSITIONAL =====
   kc1: {
     explanation:
-      'The team at the kitchen line controls the point — it is the center of the board. After the return, both partners should advance together to the non-volley line as soon as the shot pattern allows. Whoever gets there first, as a pair, usually wins the rally.',
+      'The team at the kitchen line controls the point — it is the most valuable real estate on the court. After the return, both partners should advance together to the non-volley line as soon as the shot pattern allows. Whoever gets there first, as a pair, usually wins the rally.',
     youtube: yt('pickleball get to the kitchen line doubles'),
     anim: { template: 'formation', note: 'Both partners up, together', players: DEFAULT_PLAYERS, highlight: [0, 2.13, 6.1, 0.2] },
   },
@@ -307,7 +307,7 @@ export const skillContent: Record<string, SkillContent> = {
   },
   fm4: {
     explanation:
-      'Overloading borrows from chess: force one defender to guard two things at once. Pull a player wide with a sharp angle and they can no longer also cover the middle — the gap they vacate is your target on the next ball. One piece cannot defend both squares.',
+      'Overloading forces one defender to guard two things at once. Pull a player wide with a sharp angle and they can no longer also cover the middle — the gap they vacate is your target on the next ball. A single defender cannot cover both.',
     youtube: yt('pickleball create openings angles overload'),
     anim: { template: 'formation', note: 'Pull one wide — the middle opens', highlight: [1.4, -2.0, 1.6, 1.6], players: [
       { team: 'you', pos: [-1.3, 2.6] },
@@ -349,7 +349,7 @@ export const skillContent: Record<string, SkillContent> = {
   },
   in1: {
     explanation:
-      'A Zwischenzug ("in-between move" in chess) is an unexpected shot that disrupts the opponent\'s plan. Example: instead of the expected reset when they speed up at you, you redirect a counter at their partner — forcing a brand-new problem before they can follow up their attack.',
+      'An in-between shot is an unexpected reply that disrupts the opponent\'s plan. Example: instead of the expected reset when they speed up at you, you redirect a counter at their partner — forcing a brand-new problem before they can follow up their attack.',
     youtube: yt('pickleball counter attack redirect doubles'),
     anim: { template: 'speedup', from: [0.4, 2.3], to: [1.4, -2.5], spin: 'flat', note: 'Redirect to the other opponent' },
   },
@@ -367,7 +367,7 @@ export const skillContent: Record<string, SkillContent> = {
   },
   pr1: {
     explanation:
-      'The number-one prophylactic principle: keep the ball low so it can never be attacked. If your dinks and resets stay below net height at the opponent\'s contact point, they simply have nothing to hit down on. Deny the attackable ball before it exists.',
+      'The number-one prevention principle: keep the ball low so it can never be attacked. If your dinks and resets stay below net height at the opponent\'s contact point, they simply have nothing to hit down on. Deny the attackable ball before it exists.',
     youtube: yt('pickleball keep the ball low unattackable'),
     anim: { template: 'dink', from: [1.0, 2.4], to: [-1.6, -1.9] },
   },
@@ -385,7 +385,7 @@ export const skillContent: Record<string, SkillContent> = {
   },
   pr4: {
     explanation:
-      'Cut off the opponent\'s best angles by positioning before they hit, not after. If a player loves the sharp cross-court, shade to cover it — they are forced into their second-best option. Good positioning removes shots from their menu prophylactically.',
+      'Cut off the opponent\'s best angles by positioning before they hit, not after. If a player loves the sharp cross-court, shade to cover it — they are forced into their second-best option. Good positioning removes shots from their menu before they can use them.',
     youtube: yt('pickleball cut off angles positioning'),
     anim: { template: 'formation', concept: true, note: 'Shade to take away their favorite angle', players: [
       { team: 'you', pos: [-1.9, 2.6] },

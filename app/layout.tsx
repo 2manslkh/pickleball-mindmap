@@ -18,13 +18,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Pickleball Strategy — Grandmaster Edition',
+  title: 'Pickleball Strategy',
   description:
-    'A chess-grandmaster framework for pickleball strategy. Rate your skills across five pillars and quiz yourself.',
+    'A complete strategy framework for pickleball. Rate your skills across five pillars and quiz yourself.',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Pickleball GM',
+    title: 'Pickleball',
   },
 };
 

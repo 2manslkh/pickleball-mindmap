@@ -29,7 +29,6 @@ export default function SkillCard({
         <div>
           <div className="sc-label">{skill.label}</div>
           <div className="sc-sub">{skill.sub}</div>
-          {skill.chess && <div className="sc-chess">♟️ Chess concept</div>}
         </div>
         <div className="sc-dots">
           {[1, 2, 3, 4, 5].map((i) => (
